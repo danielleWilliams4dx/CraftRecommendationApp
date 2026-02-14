@@ -1,19 +1,22 @@
 package craftApplication;
 
-public class HomeScreen implements Screen{
-	//product name and slogan are final because they shouldn't change while running
-	final String prodName = "Craft Overflow";
-	final String slogan = "Personalized crafting starts here.";
+public class SavedCraftScreen implements Screen {
+
+	String savedCraftActions = "Saved Craft Actions:\n"
+			+ "- Type ‘V’ to view a craft\n";
 	
-	//display function
 	public void disp() {
 		System.out.println(navBar);
-		System.out.println(prodName);
-		System.out.println("______________\n");
-		System.out.println(slogan+"\n\n");
+		System.out.println("Saved Crafts");
+		System.out.println("_________\n");
+		System.out.println("Additional supplies that you need are *starred*\n");
+		printCrafts();
 		System.out.println(navActions+"\n");
+		System.out.println(savedCraftActions+"\n");
 		System.out.println("Your Answer: ");
+		
 	}
+
 	public Screen actionSelect(String input, Screen[] screens) {
 		if (input.equals("H")) {
 			screens[0].disp();
@@ -31,6 +34,11 @@ public class HomeScreen implements Screen{
 			screens[3].disp();
 			return screens[3];
 		}
-		return screens[0];
+		return screens[3];
 	}
+	
+	public void printCrafts() {
+		
+	}
+
 }

@@ -11,10 +11,12 @@ public class Driver {
 		//create other screens and put them in an array to pass easier
 		InventoryScreen is = new InventoryScreen();
 		CatalogScreen cs = new CatalogScreen();
-		Screen[] screens = new Screen[3];
+		SavedCraftScreen scs = new SavedCraftScreen();
+		Screen[] screens = new Screen[4];
 		screens[0] = hs;
 		screens[1]= is;
 		screens[2] = cs;
+		screens[3] = scs;
 		//loop continuously until user ends program
 		Boolean end = false;
 		String input;

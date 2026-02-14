@@ -2,7 +2,7 @@ package craftApplication;
 
 public interface Screen {
 	//navigation bar and actions to be displayed on each screen
-	String navBar = "Home (H)   Saved Crafts (S)   Inventory (I)   Catalog (C)\n";
+	String navBar = "Home (H)     Saved Crafts (S)     Inventory (I)     Catalog (C)\n";
 	String navActions = "Navigation Actions:\n"
 			+ "- Type ‘H’ to access the homepage\n"
 			+ "- Type ‘S’ to access your saved crafts\n"

@@ -1,17 +1,26 @@
 package craftApplication;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 public class CatalogScreen implements Screen {
 	
 	//catalog has an ArrayList of its catalogItems
-	ArrayList<String> catalogItems = new ArrayList<String>();
+	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
 		
 	//actions specific to catalog to be displayed
 	String catActions = "Catalog Actions:\n"
 			+ "- Type ‘F’ to filter the catalog\n"
 			+ "- Type a comma separated list of craft supply item numbers to \n"
 			+ "  add supplies to your inventory\n";
+	
+	//constructor makes the catalog
+	public CatalogScreen(){
+		genCatalogItems();
+	}
 	
 	//display function
 	public void disp() {
@@ -37,13 +46,59 @@ public class CatalogScreen implements Screen {
 			screens[2].disp();
 			return screens[2];
 		}
+		else if (input.equals("S")) {
+			screens[3].disp();
+			return screens[3];
+		}
+		else if (input.equals("F")) {
+			//filters
+		}
+		else {
+			String[] materials = input.split(",");
+			addToCat(materials);
+			
+		}
 		return screens[2];
 	}
 	
+	private void addToCat(String[] materials) {
+		try {
+		FileWriter myWriter = new FileWriter("catalog.csv");
+			for (String m: materials) {
+				myWriter.write(m);
+			}
+			myWriter.close();
+		} catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		}
+		
+		
+	}
+
 	//prints contents of catalog
 	private void printCat() {
-		for (String item:this.catalogItems){
+		for (Craft item:this.catalogItems){
 			System.out.println(item);
 		}
+	}
+	
+	//makes a catalog full of craft objects
+	private void genCatalogItems() {
+		String filePath = "catalog.csv";
+        String line;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            while((line = br.readLine()) != null) {
+            	Craft c = new Craft(line);
+                this.catalogItems.add(c);
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+	}
+	
+	public ArrayList<Craft> getItems(){
+		return this.catalogItems;
 	}
 }
