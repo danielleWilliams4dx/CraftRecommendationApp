@@ -61,7 +61,7 @@ public class InventoryScreen implements Screen{
 					+ "- Type ‘V’ to view a craft\n"
 					+ "- Type a comma separated list of the numbers of crafts that you would like to save\n"
 					+ "- Type ‘I’ to return to your inventory");
-			answer = kb.nextLine();
+			answer = kb.nextLine().toUpperCase();
 			if (answer.equals("V")) {
 				System.out.println("Please type the number of the craft you would like to view: ");
 				int response = kb.nextInt();

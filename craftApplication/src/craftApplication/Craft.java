@@ -79,20 +79,19 @@ public class Craft {
 	}
 
 	public void specialPrint(ArrayList<String> inventory) {
-		System.out.println("1) "+this.name+"\n"
+		System.out.print("1) "+this.name+"\n"
 				+ "   Type: "+this.type+"\n"
-				+ "   Materials:");
+				+ "   Materials:\n   ");
 		for (String item: this.materials) {
+			String printString = "*"+item+"* ";
 			for (String thing: inventory) {
 				if (item.equals(thing)) {
-					System.out.print(item+" ");
-				}
-				else {
-					System.out.print("*"+item+"* ");
+					printString = item+" ";
 				}
 			}
+			System.out.print(printString);
 		}
-		System.out.println("   Skill Level: "+this.level+"\n"
+		System.out.println("\n   Skill Level: "+this.level+"\n"
 				+ "   Time: "+this.timeEst+"\n"
 				+ "   Description:\n"
 				+ "   "+this.description+"\n");
