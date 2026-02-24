@@ -1,6 +1,7 @@
 package craftApplication;
 
 import java.util.Scanner;
+import java.io.File;
 
 public class Driver {
 	
@@ -8,7 +9,7 @@ public class Driver {
 		
 		//debugger helper: csv paths are resolved relative to the folder 
 		System.out.println("CWD(working directory): " + new File(".").getAbsolutePath());
-		System.out.println;
+		System.out.println();
 		
 		
 		
