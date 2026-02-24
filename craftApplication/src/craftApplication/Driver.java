@@ -6,7 +6,12 @@ public class Driver {
 	
 	public static void main(String[] args) {
 		
-		Scanner kb = new Scanner(System.in);
+		//debugger helper: csv paths are resolved relative to the folder 
+		System.out.println("CWD(working directory): " + new File(".").getAbsolutePath());
+		System.out.println;
+		
+		
+		
 		//create home screen 
 		HomeScreen hs = new HomeScreen();
 		//create other screens and put them in an array to pass easier
@@ -19,10 +24,12 @@ public class Driver {
 		screens[2] = cs;
 		screens[3] = scs;
 		
-		Screen = currentScreen = hs;
+		Screen currentScreen = hs;
 		currentScreen.disp();
+		
+		Scanner kb = new Scanner(System.in);
 		//loop continuously until user ends program
-		Boolean end = false;
+		boolean end = false;
 
 		while (!end) {
 			
