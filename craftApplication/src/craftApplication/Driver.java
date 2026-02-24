@@ -23,7 +23,11 @@ public class Driver {
 		//keep track of which screen you are viewing
 		Screen currentScreen = hs;
 		while (!end) {
-			input = kb.next().toUpperCase();
+			input = kb.nextLine().trim().toUpperCase();
+			if (input.isEmpty()) {
+				System.out.println("Invalid input. Please try again.");
+				continue;
+			}
 			if (input.equals("X"))
 				end = true;
 			else
