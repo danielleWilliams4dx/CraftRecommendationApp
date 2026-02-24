@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class CatalogScreen implements Screen {
 	
 	//catalog has an ArrayList of its catalogItems
-	//test push
+	//test commit
 	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
 		
 	//actions specific to catalog to be displayed
