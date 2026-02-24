@@ -3,11 +3,12 @@ package craftApplication;
 import java.util.Scanner;
 
 public class Driver {
+	
 	public static void main(String[] args) {
+		
 		Scanner kb = new Scanner(System.in);
-		//create home screen and display it
+		//create home screen 
 		HomeScreen hs = new HomeScreen();
-		hs.disp();
 		//create other screens and put them in an array to pass easier
 		InventoryScreen is = new InventoryScreen();
 		CatalogScreen cs = new CatalogScreen();
@@ -17,11 +18,12 @@ public class Driver {
 		screens[1]= is;
 		screens[2] = cs;
 		screens[3] = scs;
+		
+		Screen = currentScreen = hs;
+		currentScreen.disp();
 		//loop continuously until user ends program
 		Boolean end = false;
-		String input;
-		//keep track of which screen you are viewing
-		Screen currentScreen = hs;
+
 		while (!end) {
 			
 			//read full line so inputs like "1, 2, 3" still work 
@@ -43,6 +45,6 @@ public class Driver {
 			
 		}
 		
-		System.out.println("Exiting application. Goodbye!")
+		System.out.println("Exiting application. Goodbye!");
 	}
 }
