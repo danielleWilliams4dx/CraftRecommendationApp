@@ -29,7 +29,7 @@ public class Craft {
         
         //trim materials so comparisons work reliably 
         for (int i = 0; i< this.materials.length; i++ ) {
-        	this.materials[i] = this.materials[i].trim();
+        		this.materials[i] = this.materials[i].trim();
         }
 	}
 	

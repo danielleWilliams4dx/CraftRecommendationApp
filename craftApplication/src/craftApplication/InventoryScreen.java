@@ -1,10 +1,10 @@
 package craftApplication;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.HashSet;
 
@@ -19,7 +19,7 @@ import java.util.HashSet;
 
 public class InventoryScreen implements Screen{
 	//inventory has an ArrayList of items
-	ArrayList<String> items = new ArrayList<String>();
+	ArrayList<CraftSupply> items = new ArrayList<CraftSupply>();
 	
 	//Active filters (interpreted as selected "categories" from the available list)
 	private ArrayList<String> activeFilters = new ArrayList<String>();
@@ -31,7 +31,7 @@ public class InventoryScreen implements Screen{
 	
 	public InventoryScreen() {
 		genItems();
-		Collections.sort(this.items);
+		sortInventory();
 	}
 	
 	//display function
@@ -90,24 +90,32 @@ public class InventoryScreen implements Screen{
 		return screens[1];
 	}
 		//Inventory filter menu 
-		private void runFilterMenu() {
+		private void runFilterMenu() {			
 			
 			Scanner kb = new Scanner(System.in);
 			System.out.println("\nInventory Filter Menu");
 			System.out.println("_____________________\n");
-			System.out.println("Select one or more categories (comma-separated)");
-			System.out.println("Type 'D' to clear filters.");
-			System.out.println("Type 'I' to return to Inventory without changes.\n");
 			
+			//filters are based on all CraftSupply types
+			ArrayList<String> filters = new ArrayList<String>(Arrays.asList("Adhesives", "Drawing", "Jewelry", "Painting", "Paper", "Sewing"));
+			
+			System.out.println("   Filter By:");
 			//show selectable filter options (1-based)
-			for (int i = 0; i < items.size(); i++) {
-				System.out.println((i + 1 ) + ") " + items.get(i)); 
+			for (int i = 0; i < filters.size(); i++) {
+				System.out.println("   " + (i + 1 ) + ") " + filters.get(i)); 
 			}
 			
-			System.out.println("\nYour Answer: ");
+			System.out.println("\n\nFilter Actions:");
+			System.out.println("- Select one or more categories (comma-separated)");
+			System.out.println("- Type 'D' to clear filters");
+			System.out.println("- Type 'I' to return to Inventory without changes\n");
 			
-			//input fix: use nextLine so we can accpt comma-separated inputs with spaces 
+			System.out.println("Your Answer: ");
+			
+			//input fix: use nextLine so we can accept comma-separated inputs with spaces 
 			String ans = kb.nextLine().trim().toUpperCase();
+			
+			System.out.println("\n");
 			
 			if (ans.equals("I")) {
 				return;
@@ -132,13 +140,13 @@ public class InventoryScreen implements Screen{
 					int idx = Integer.parseInt(token);
 					
 					//error handling: bounds check 
-					if (idx < 1 || idx > items.size()) { 
+					if (idx < 1 || idx > filters.size()) { 
 						System.out.println("Invalid selection: " + token);
 						continue;
 					}
 					
 					if (seen.add(idx) ) {
-						newFilters.add(items.get(idx - 1)); //convert to 0-b
+						newFilters.add(filters.get(idx - 1)); //convert to 0-b
 					}
 					
 				} catch (NumberFormatException e) {
@@ -247,12 +255,19 @@ public class InventoryScreen implements Screen{
 	
 	//prints contents of inventory
 	private void printItems() {
-		for (String item:this.items){
-			if (activeFilters.isEmpty() || activeFilters.contains(item)) {
+		boolean results = false;
+		for (CraftSupply item : this.items){
+			//If active filters is empty or 
+			//if the item's type is within the active filters, print it out
+			if (activeFilters.isEmpty() || activeFilters.contains(item.getType())) {
+				results = true;
 				System.out.println(item);
 			}
 		}
 		
+		if(results == false) {
+			System.out.println("No results.");
+		}
 	}
 	
 	
@@ -260,20 +275,39 @@ public class InventoryScreen implements Screen{
 	private void genItems() {
 		String filePath = "inventory.csv";
         String line;
-        String delimiter = ",";
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while((line = br.readLine()) != null) {
-                String[] values = line.split(delimiter);
-                for (String value : values) {
-                    String cleaned = value.trim();
-                    if (!cleaned.isEmpty())
-                    	this.items.add(cleaned);
-                }
+                CraftSupply cs = new CraftSupply(line);
+                this.items.add(cs);
             }
         } catch (IOException e) {
         	System.err.println(e.getMessage());
         }
+	}
+	
+	//sorts the inventory items alphabetically
+	private void sortInventory() {
+		ArrayList<CraftSupply> sorted = new ArrayList<CraftSupply>();
+			
+		while(items.size() > 0) {
+			CraftSupply first = items.get(0);
+			
+			for(int i = 0; i < items.size(); i++) {
+				//if the item's name comes first in the alphabet, it becomes the new first
+				if(first.toString().compareTo(items.get(i).toString()) > 0) {
+					first = items.get(i);
+				}					
+			}
+			//add the item in first to the sorted list and remove it from items
+			sorted.add(first.copy());
+			items.remove(first);
+		}
+		
+		//items should be empty now
+		
+		//adds all of the sorted items to items
+		items.addAll(sorted);
 	}
 }
                 

@@ -7,7 +7,9 @@ public class Recommender {
 	
 	ArrayList<Craft> recs = new ArrayList<Craft>();
 	
-	public Recommender(String input, ArrayList<String> items, Screen[] screens) {
+	public Recommender(String input, ArrayList<CraftSupply> items, Screen[] screens) {
+		
+		ArrayList<String> justItemNames = getAllItemNames(items);
 		
 		//case: use entire inv
 		if (input.equals("E")) {
@@ -18,7 +20,7 @@ public class Recommender {
 				int count = 0;
 				
 				for (String mat: materials) {
-					if (!items.contains(mat)){
+					if (!justItemNames.contains(mat)){
 						count++;
 					}
 				}
@@ -31,7 +33,7 @@ public class Recommender {
 				
 				//+1 or +2 materials
 				else if (count ==1 || count==2) {
-					craft.specialPrint(items);
+					craft.specialPrint(justItemNames);
 					recs.add(craft);
 				}
 				
@@ -65,11 +67,21 @@ public class Recommender {
 				
 				//+1 or 2 materials 
 				else if (count == 1 || count == 2) {
-					craft.specialPrint(items);
+					craft.specialPrint(justItemNames);
 					recs.add(craft);
 				}
 			}
 		}
 		
+	}
+	
+	private ArrayList<String> getAllItemNames(ArrayList<CraftSupply> items) {
+		ArrayList<String> names = new ArrayList<String>();
+		
+		for(CraftSupply item : items) {
+			names.add(item.getName());
+		}
+		
+		return names;
 	}
 }
