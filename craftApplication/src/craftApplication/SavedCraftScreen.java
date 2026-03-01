@@ -57,7 +57,7 @@ public class SavedCraftScreen implements Screen {
 			
 		}
 		
-		System.out.println("Iinvalid input. Please try again.");
+		System.out.println("Invalid input. Please try again.");
 		this.disp();
 		return screens[3];
 		
@@ -95,22 +95,45 @@ public class SavedCraftScreen implements Screen {
 		}
 		
 		Scanner kb = new Scanner(System.in);
-		System.out.println("Please type the number of the craft you would like to view: ");
-		String input = kb.nextLine().trim();
+		boolean success = false;
+		System.out.println();
 		
-		try {
-			int idx = Integer.parseInt(input);
-			if (idx<1 || idx > savedCrafts.size()) {
-				System.out.println("Invalid craft number. Please try again.");
-				return;
+		//re-prompt until a valid craft number is entered
+		while(!success) {
+			System.out.println("Please type the number of the craft you would like to view: ");
+			String input = kb.nextLine().trim();
+			
+			try {
+				int idx = Integer.parseInt(input);
+				if (idx<1 || idx > savedCrafts.size()) {
+					System.out.println("\nInvalid craft number. Please try again.");
+					continue;
+				}
+				System.out.println("\n\n" + savedCrafts.get(idx-1).toStringWithIndex(idx));
+				success = true;
+				
+			} catch (NumberFormatException e) {
+				System.out.println("\nInvalid input. Please enter a number.");
+				
 			}
-			System.out.println(savedCrafts.get(idx-1).toStringWithIndex(idx));
-			System.out.println("Type 'S' to return to your saved crafts.");
-			
-		} catch (NumberFormatException e) {
-			System.out.println("Invalid input. Please enter a number.");
-			
 		}
+		
+		boolean returnToSavedCrafts = false;
+		System.out.println();
+		
+		while(!returnToSavedCrafts) {
+			System.out.println("Type 'S' to return to your saved crafts.");
+			String input = kb.nextLine().trim();
+			
+			if(input.toUpperCase().equals("S")) {
+				returnToSavedCrafts = true;
+			} else {
+				System.out.println("\nInvalid input.");
+			}
+		}
+		
+		System.out.println("\n");
+		
 	 }
 
 }

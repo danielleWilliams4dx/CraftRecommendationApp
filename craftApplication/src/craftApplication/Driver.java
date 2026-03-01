@@ -54,5 +54,6 @@ public class Driver {
 		}
 		
 		System.out.println("Exiting application. Goodbye!");
+		kb.close();
 	}
 }
