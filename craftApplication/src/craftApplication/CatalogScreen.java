@@ -15,6 +15,9 @@ public class CatalogScreen implements Screen {
 	//catalog has an ArrayList of its catalogItems
 	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
 	
+	//get the user's inventory (items are static)
+	Inventory inv = new Inventory();
+	
 	//Active filters 
 	private ArrayList<String> activeFilters = new ArrayList<String>();
 		
@@ -175,7 +178,7 @@ public class CatalogScreen implements Screen {
 				int idx = Integer.parseInt(token);
 				if (!seen.add(idx)) continue;
 				Craft c = getFilteredCatalog().get(idx-1);
-				System.out.println(c.toStringWithIndex(idx));
+				System.out.println(c.toStringWithIndex(idx, inv));
 			} catch (Exception e) {
 				System.out.println("Invalid selection: " + token);
 			}
@@ -202,7 +205,7 @@ public class CatalogScreen implements Screen {
 			return;
 		}
 		for (int i = 0; i< list.size(); i++){
-			System.out.println(list.get(i).toStringWithIndex(i+1));
+			System.out.println(list.get(i).toStringWithIndex(i+1, inv));
 		}
 	}
 	

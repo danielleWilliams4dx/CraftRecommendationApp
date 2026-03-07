@@ -2,6 +2,8 @@ package craftApplication;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException; 
 import java.util.HashSet;
@@ -45,43 +47,8 @@ public class Craft {
 	} 
 	
 	//fix: allowing screens to print correct numbering (1 based)
-	public String toStringWithIndex(int index) {
-		return index + ") " + this.name + "\n"
-				+ "   Type: " + this.type + "\n"
-				+ "   Materials: "+ materialsString()+ "\n"
-				+ "   Skill Level: "+ this.level+ "\n"
-				+ "   Time: "+ this.timeEst + "\n"
-				+ "   Description:\n"
-				+ "   " + this.description + "\n";
-	}
-	
-	//Star each missing item only once (no duplicates)
-	public void specialPrint(String[] inventory) {
-		
-		HashSet<String> invSet = new HashSet<>();
-		for (String thing : inventory) {
-			if (thing != null) invSet.add(thing.trim());
-		}
-		
-		System.out.println("   "+ this.name + "\n"
-				+ "   Type: " + this.type + "\n"
-				+ "   Materials:\n   ");
-		
-		for (String item: this.materials) {
-			String cleaned = item.trim();
-			if (invSet.contains(cleaned)) {
-				System.out.print(cleaned + " ");
-			} else {
-				System.out.print("*" + cleaned + "* ");
-				
-			}
-		}
-			
-		System.out.println("\n   Skill Level: " + this.level+ "\n"
-				+ "   Time: "+ this.timeEst+ "\n"
-				+ "   Description:\n"
-				+ "   " + this.description+ "\n");
-		
+	public String toStringWithIndex(int index, Inventory inv) {
+		return index + ")" + specialPrint(inv);
 	}
 	
 	private String materialsString() {
@@ -103,49 +70,62 @@ public class Craft {
 	public String getLine() {
 		return this.line;
 	}
-//fix: star logic but for ArrayList
 	
-	public void specialPrint(ArrayList<String> inventory) {
-		
-		HashSet<String> invSet = new HashSet<>();
-		for (String thing : inventory) {
-			if (thing != null) invSet.add(thing.trim());
-		}
-		
-		System.out.print("   " + this.name + "\n"
+	//Star each missing item only once (no duplicates)
+	public String specialPrint(Inventory inv) {
+		ArrayList<String> justItemNames = inv.getJustItemNames();
+		String s = " " + this.name + "\n"
 				+ "   Type: " + this.type + "\n"
-				+ "   Materials:\n   ");
+				+ "   Materials:\n   ";
 		
 		for (String item: this.materials) {
 			String cleaned = item.trim();
-			if (invSet.contains(cleaned)) {
-				System.out.print(cleaned + " ");
+			if (justItemNames.contains(cleaned.toLowerCase())) {
+				s += cleaned + " ";
 			} else {
-				System.out.print("*" + cleaned + "* ");
+				s += "*" + cleaned + "* ";
 			}
 
 		}
 		
 
-		System.out.println("\n   Skill Level: " + this.level + "\n"
+		s +=  "\n   Skill Level: " + this.level + "\n"
 				+ "   Time: " + this.timeEst + "\n"
 				+ "   Description:\n"
-				+ "   "+ this.description+"\n");
+				+ "   "+ this.description+"\n";
+		
+		return s;
 		
 	}
 
 	public void save() {
 		//adapted from: https://www.w3schools.com/java/java_files_write.asp
-		//fix: appending mode so saving doesn't overwrite the file
-		//fix: adding new line, so craft displays 
 		try {
-		      FileWriter myWriter = new FileWriter("savedCrafts.csv");
-		      myWriter.write(this.line + System.lineSeparator());
+		      FileWriter myWriter = new FileWriter("savedCrafts.csv", true);
+		      if(!craftAlreadySaved(this.line)) {
+		    	  	myWriter.append(this.line + System.lineSeparator());
+		      }
 		      myWriter.close();
-		    } catch (IOException e) {
-		      System.out.println("An error occurred.");
-		      e.printStackTrace();
-		    }
+	    } catch (IOException e) {
+	      System.out.println("An error occurred.");
+	      e.printStackTrace();
+	    }
 		
+	}
+	
+	private boolean craftAlreadySaved(String line) {
+		String filePath = "savedCrafts.csv";
+		String currLine;
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			while((currLine = br.readLine()) != null) {
+				if (currLine.trim().isEmpty()) continue;
+				if(currLine.equals(line)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {}
+		
+		return false;
 	}
 }

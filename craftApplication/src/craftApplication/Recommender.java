@@ -7,10 +7,10 @@ public class Recommender {
 	
 	ArrayList<Craft> recs = new ArrayList<Craft>();
 	
-	public Recommender(String input, ArrayList<CraftSupply> items, Screen[] screens) {
+	public Recommender(String input, Inventory inv, Screen[] screens) {
 		
-		ArrayList<String> justItemNames = getAllItemNames(items);
-		
+		ArrayList<String> justItemNames = inv.getJustItemNames();
+				
 		//case: use entire inv
 		if (input.equals("E")) {
 			
@@ -19,8 +19,8 @@ public class Recommender {
 				String[] materials = craft.getMaterials();
 				int count = 0;
 				
-				for (String mat: materials) {
-					if (!justItemNames.contains(mat)){
+				for (String mat: materials) {			
+					if (!justItemNames.contains(mat.toLowerCase())){
 						count++;
 					}
 				}
@@ -33,7 +33,7 @@ public class Recommender {
 				
 				//+1 or +2 materials
 				else if (count ==1 || count==2) {
-					craft.specialPrint(justItemNames);
+					System.out.println("  " + craft.specialPrint(inv));
 					recs.add(craft);
 				}
 				
@@ -46,7 +46,37 @@ public class Recommender {
 		
 		else {
 			
-			String[] itemsUsed = input.split(",");
+			String[] itemsUsedIndices = input.split(",");
+			ArrayList<String> itemsUsed = new ArrayList<>();
+			
+			//Get all of the item names based on the inputed indices
+			//Modified code from viewCraftFlow on SavedCraftScreen
+			for(String index : itemsUsedIndices) {
+				
+				index = index.trim();
+				if(index.isEmpty()) {
+					continue;
+				}
+				
+				try {
+					int i = Integer.parseInt(index)-1;
+					if(i >= 0 && i < justItemNames.size()) {
+						itemsUsed.add(justItemNames.get(i).toLowerCase());
+					}else {
+						System.out.println("Invalid craft supply number: " + index);
+					}
+				} catch (NumberFormatException e) { 
+					//non-numeric token handling 
+					System.out.println("Invalid craft supply number: " + index);
+				}
+	
+			}
+			
+//			debugging
+//			System.out.println("itemsUsed: ");
+//			for(String item : itemsUsed) {
+//				System.out.println(item);
+//			}
 			
 			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
 				
@@ -54,7 +84,7 @@ public class Recommender {
 				int count = 0;
 				
 				for (String mat: materials) {
-					if (!Arrays.asList(itemsUsed).contains(mat)){
+					if (!itemsUsed.contains(mat.toLowerCase())){
 						count++;
 					}
 				}
@@ -67,21 +97,11 @@ public class Recommender {
 				
 				//+1 or 2 materials 
 				else if (count == 1 || count == 2) {
-					craft.specialPrint(justItemNames);
+					System.out.println("  " + craft.specialPrint(inv));
 					recs.add(craft);
 				}
 			}
 		}
 		
-	}
-	
-	private ArrayList<String> getAllItemNames(ArrayList<CraftSupply> items) {
-		ArrayList<String> names = new ArrayList<String>();
-		
-		for(CraftSupply item : items) {
-			names.add(item.getName());
-		}
-		
-		return names;
 	}
 }

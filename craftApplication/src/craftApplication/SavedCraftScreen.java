@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class SavedCraftScreen implements Screen {
 	
 	private ArrayList<Craft> savedCrafts = new ArrayList<Craft>();
+	private Inventory inv = new Inventory();
 	
 
 	String savedCraftActions = "Saved Craft Actions:\n"
@@ -22,7 +23,6 @@ public class SavedCraftScreen implements Screen {
 		System.out.println(navBar);
 		System.out.println("Saved Crafts");
 		System.out.println("_________\n");
-		System.out.println("Additional supplies that you need are *starred*\n");
 		
 		printCrafts();
 		
@@ -83,8 +83,9 @@ public class SavedCraftScreen implements Screen {
 			System.out.println("(You have no saved crafts yet.)\n");
 			return;
 		}
+		System.out.println("Additional supplies that you need are *starred*\n");
 		for (int i = 0; i < savedCrafts.size(); i++) {
-			System.out.println(savedCrafts.get(i).toStringWithIndex(i+1));
+			System.out.println(savedCrafts.get(i).toStringWithIndex(i+1, inv));
 		}
 	}
 	
@@ -109,7 +110,7 @@ public class SavedCraftScreen implements Screen {
 					System.out.println("\nInvalid craft number. Please try again.");
 					continue;
 				}
-				System.out.println("\n\n" + savedCrafts.get(idx-1).toStringWithIndex(idx));
+				System.out.println("\n\n" + savedCrafts.get(idx-1).toStringWithIndex(idx, inv));
 				success = true;
 				
 			} catch (NumberFormatException e) {

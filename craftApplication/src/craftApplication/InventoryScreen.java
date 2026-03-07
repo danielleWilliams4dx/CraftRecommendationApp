@@ -18,8 +18,8 @@ import java.util.HashSet;
 // - 'I'returns without changes 
 
 public class InventoryScreen implements Screen{
-	//inventory has an ArrayList of items
-	ArrayList<CraftSupply> items = new ArrayList<CraftSupply>();
+	
+	Inventory inv = new Inventory();
 	
 	//Active filters (interpreted as selected "categories" from the available list)
 	private ArrayList<String> activeFilters = new ArrayList<String>();
@@ -29,10 +29,7 @@ public class InventoryScreen implements Screen{
 			+ "- Type ‘F’ to filter your inventory\n"
 			+ "- Type ‘R’ to generate craft recommendations\n";
 	
-	public InventoryScreen() {
-		genItems();
-		sortInventory();
-	}
+	public InventoryScreen() {}
 	
 	//display function
 	public void disp() {
@@ -46,7 +43,7 @@ public class InventoryScreen implements Screen{
 			System.out.println("Filter (F) [Active: " + String.join(", ", activeFilters) + "]\n");
 		}
 			
-		printItems();
+		inv.printItems(activeFilters);
 		System.out.println("\n"+navActions+"\n");
 		System.out.println(invActions+"\n");
 		System.out.println("Your Answer: ");
@@ -173,7 +170,7 @@ public class InventoryScreen implements Screen{
 			String answer = kb.nextLine().trim().toUpperCase();
 			
 			//generate recommendations
-			Recommender rec = new Recommender(answer, this.items, screens);
+			Recommender rec = new Recommender(answer, this.inv, screens);
 			
 			System.out.println("Craft Recommendation Actions:\n"
 					+ "- Type ‘V’ to view a craft\n"
@@ -184,25 +181,44 @@ public class InventoryScreen implements Screen{
 			
 			if (answer.equals("V")) {
 				
-				System.out.println("Please type the number of the craft you would like to view: ");
-				String numLine = kb.nextLine().trim();
+				boolean success = false;
+				System.out.println();
 				
-				try {
-					int response = Integer.parseInt(numLine);
+				//re-prompt until a valid craft number is entered
+				while(!success) {
+					System.out.println("Please type the number of the craft you would like to view: ");
+					String input = kb.nextLine().trim();
 					
-					if (response < 1 || response > rec.recs.size()) {
-						System.out.println("Invalid craft number. Please try again.");
-						return;
+					try {
+						int idx = Integer.parseInt(input);
+						if (idx<1 || idx > rec.recs.size()) {
+							System.out.println("\nInvalid craft number. Please try again.");
+							continue;
+						}
+						System.out.println("\n\n" + rec.recs.get(idx - 1).toStringWithIndex(idx, inv));
+						success = true;
+						
+					} catch (NumberFormatException e) {
+						System.out.println("\nInvalid input. Please enter a number.");
+						
 					}
-					
-					System.out.println(rec.recs.get(response - 1).toStringWithIndex(response));
-					
-				} catch (NumberFormatException e) {
-					 
-					 //non-numeric craft should not crash 
-					 System.out.println("Invalid input. Please enter a number.");
 				}
 				
+				boolean returnToInventory = false;
+				System.out.println();
+				
+				while(!returnToInventory) {
+					System.out.println("Type 'I' to return to your Inventory.");
+					String input = kb.nextLine().trim();
+					
+					if(input.toUpperCase().equals("I")) {
+						returnToInventory = true;
+					} else {
+						System.out.println("\nInvalid input.");
+					}
+				}
+				
+				System.out.println("\n");
 				return;
 				
 			} else if (answer.equals("I")) {
@@ -217,7 +233,7 @@ public class InventoryScreen implements Screen{
 				String[] nums = answer.split(",");
 				int savedCount = 0;
 				
-				for (String number: nums) {
+				for (String number : nums) {
 					String token = number.trim();
 					if (token.isEmpty())
 						continue;
@@ -230,7 +246,7 @@ public class InventoryScreen implements Screen{
 							continue;
 						}
 						
-						if (seen.add(idx) ) {
+						if (seen.add(idx)) {
 							rec.recs.get(idx - 1).save();
 							savedCount++;
 						}
@@ -249,66 +265,7 @@ public class InventoryScreen implements Screen{
 				else 
 					System.out.println("No crafts were saved.");
 			}
-		}
-		
-	
-	
-	//prints contents of inventory
-	private void printItems() {
-		boolean results = false;
-		for (CraftSupply item : this.items){
-			//If active filters is empty or 
-			//if the item's type is within the active filters, print it out
-			if (activeFilters.isEmpty() || activeFilters.contains(item.getType())) {
-				results = true;
-				System.out.println(item);
-			}
-		}
-		
-		if(results == false) {
-			System.out.println("No results.");
-		}
-	}
-	
-	
-	//generates the ArrayList for the inventory, code modified from: https://medium.com/@zakariafarih142/mastering-csv-parsing-in-java-comprehensive-methods-and-best-practices-a3b8d0514edf
-	private void genItems() {
-		String filePath = "inventory.csv";
-        String line;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            while((line = br.readLine()) != null) {
-                CraftSupply cs = new CraftSupply(line);
-                this.items.add(cs);
-            }
-        } catch (IOException e) {
-        	System.err.println(e.getMessage());
-        }
-	}
-	
-	//sorts the inventory items alphabetically
-	private void sortInventory() {
-		ArrayList<CraftSupply> sorted = new ArrayList<CraftSupply>();
-			
-		while(items.size() > 0) {
-			CraftSupply first = items.get(0);
-			
-			for(int i = 0; i < items.size(); i++) {
-				//if the item's name comes first in the alphabet, it becomes the new first
-				if(first.toString().compareTo(items.get(i).toString()) > 0) {
-					first = items.get(i);
-				}					
-			}
-			//add the item in first to the sorted list and remove it from items
-			sorted.add(first.copy());
-			items.remove(first);
-		}
-		
-		//items should be empty now
-		
-		//adds all of the sorted items to items
-		items.addAll(sorted);
-	}
+		}	
 }
                 
                     
