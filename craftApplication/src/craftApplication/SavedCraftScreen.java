@@ -13,13 +13,13 @@ public class SavedCraftScreen implements Screen {
 	
 
 	String savedCraftActions = "Saved Craft Actions:\n"
-			+ "- Type ‘V’ to view a craft\n"
-	        + "- Type 'S' to return to Saved Crafts\n";
+			+ "- Type ‘V’ to view a craft\n";
 	
 	public void disp() {
 		
 		loadSavedCrafts();
 		
+		System.out.println("\n");
 		System.out.println(navBar);
 		System.out.println("Saved Crafts");
 		System.out.println("_________\n");
@@ -27,7 +27,7 @@ public class SavedCraftScreen implements Screen {
 		printCrafts();
 		
 		System.out.println(navActions+"\n");
-		System.out.println(savedCraftActions+"\n");
+		System.out.println(savedCraftActions);
 		System.out.println("Your Answer: ");
 		
 	}
@@ -57,7 +57,7 @@ public class SavedCraftScreen implements Screen {
 			
 		}
 		
-		System.out.println("Invalid input. Please try again.");
+		System.out.println("\nInvalid input. Please try again.");
 		this.disp();
 		return screens[3];
 		
@@ -131,10 +131,6 @@ public class SavedCraftScreen implements Screen {
 			} else {
 				System.out.println("\nInvalid input.");
 			}
-		}
-		
-		System.out.println("\n");
-		
+		}		
 	 }
-
 }

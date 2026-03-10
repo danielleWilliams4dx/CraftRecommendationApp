@@ -1,6 +1,7 @@
 package craftApplication;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.File;
 
 public class Driver {
@@ -39,7 +40,7 @@ public class Driver {
 			
 			//Empty input handling
 			if (input.isEmpty()) {
-				System.out.println("Invalid input. Please try again.\n");
+				System.out.println("\nInvalid input. Please try again.\n\n");
 				currentScreen.disp();
 				continue;
 			}
@@ -53,7 +54,7 @@ public class Driver {
 			
 		}
 		
-		System.out.println("Exiting application. Goodbye!");
+		System.out.println("\nExiting application. Goodbye!");
 		kb.close();
 	}
 }

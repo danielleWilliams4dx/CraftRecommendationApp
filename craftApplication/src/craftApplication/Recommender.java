@@ -10,7 +10,9 @@ public class Recommender {
 	public Recommender(String input, Inventory inv, Screen[] screens) {
 		
 		ArrayList<String> justItemNames = inv.getJustItemNames();
-				
+		
+		System.out.println("\n");
+		
 		//case: use entire inv
 		if (input.equals("E")) {
 			
@@ -63,11 +65,11 @@ public class Recommender {
 					if(i >= 0 && i < justItemNames.size()) {
 						itemsUsed.add(justItemNames.get(i).toLowerCase());
 					}else {
-						System.out.println("Invalid craft supply number: " + index);
+						System.out.println("Invalid craft supply number: " + index + "\n");
 					}
 				} catch (NumberFormatException e) { 
 					//non-numeric token handling 
-					System.out.println("Invalid craft supply number: " + index);
+					System.out.println("Invalid craft supply number: " + index + "\n");
 				}
 	
 			}

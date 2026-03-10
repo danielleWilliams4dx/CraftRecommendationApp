@@ -25,7 +25,7 @@ public class CatalogScreen implements Screen {
 	String catActions = "Catalog Actions:\n"
 			+ "- Type ‘F’ to filter the catalog\n"
 			+ "- Type a comma separated list of craft supply item numbers to \n"
-			+ "  add supplies to your inventory\n";
+			+ "  add supplies to your inventory";
 	
 	//constructor makes the catalog
 	public CatalogScreen(){
@@ -34,6 +34,7 @@ public class CatalogScreen implements Screen {
 	
 	//display function
 	public void disp() {
+		System.out.println("\n");
 		System.out.println(navBar);
 		System.out.println("Catalog");
 		System.out.println("_______\n");
@@ -84,11 +85,11 @@ public class CatalogScreen implements Screen {
 		
 		//Building a list of unique "categories" from the catalog 
 		ArrayList<String> categories = getCatalogCategories();
-		System.out.println("\nCatalog Filter Menu");
+		System.out.println("\n\nCatalog Filter Menu");
 		System.out.println("_____________________\n");
 		System.out.println("Select one or more categories (comma-separated)");
 		System.out.println("Type 'D' to clear filters.");
-		System.out.println("Type 'I' to return to Catalog without changes.\n");
+		System.out.println("Type 'C' to return to Catalog without changes.\n");
 		
 		//show selectable filter options (1-based)
 		for (int i = 0; i < categories.size(); i++) {
@@ -103,6 +104,7 @@ public class CatalogScreen implements Screen {
 		}
 		if (ans.equals("D")) {
 			activeFilters.clear(); 
+			System.out.println("\nAll filters cleared.");
 			return;
 		}
 		
@@ -120,7 +122,7 @@ public class CatalogScreen implements Screen {
 	
 				//error handling: bounds check 
 				if (idx < 1 || idx > categories.size()) { 
-					System.out.println("Invalid selection: " + token);
+					System.out.println("\nInvalid selection: " + token);
 					continue;
 				}
 				
@@ -130,7 +132,7 @@ public class CatalogScreen implements Screen {
 				
 			} catch (NumberFormatException e) {
 				//ERR handling: non-numeric token 
-				System.out.println("Invalid selection " + token);
+				System.out.println("\nInvalid selection " + token);
 				
 			}
 		}
@@ -170,6 +172,7 @@ public class CatalogScreen implements Screen {
 	private void viewSelectedCrafts(String input) {
 		String[] nums = input.split(",");
 		HashSet<Integer> seen = new HashSet<Integer>();
+		System.out.println();
 		
 		for (String number : nums) {
 			String token = number.trim();
@@ -180,7 +183,7 @@ public class CatalogScreen implements Screen {
 				Craft c = getFilteredCatalog().get(idx-1);
 				System.out.println(c.toStringWithIndex(idx, inv));
 			} catch (Exception e) {
-				System.out.println("Invalid selection: " + token);
+				System.out.println("Invalid selection: " + token + "\n");
 			}
 		}
 	}

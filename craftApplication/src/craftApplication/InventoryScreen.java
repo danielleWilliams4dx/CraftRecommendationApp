@@ -33,6 +33,7 @@ public class InventoryScreen implements Screen{
 	
 	//display function
 	public void disp() {
+		System.out.println("\n");
 		System.out.println(navBar);
 		System.out.println("Inventory");
 		System.out.println("_________\n");
@@ -45,7 +46,7 @@ public class InventoryScreen implements Screen{
 			
 		inv.printItems(activeFilters);
 		System.out.println("\n"+navActions+"\n");
-		System.out.println(invActions+"\n");
+		System.out.println(invActions);
 		System.out.println("Your Answer: ");
 	}
 	
@@ -82,7 +83,7 @@ public class InventoryScreen implements Screen{
 		}
 		
 		//Invalid command handling 
-		System.out.println("Invalid input. Please try again.");
+		System.out.println("\nInvalid input. Please try again.");
 		screens[1].disp();
 		return screens[1];
 	}
@@ -90,7 +91,7 @@ public class InventoryScreen implements Screen{
 		private void runFilterMenu() {			
 			
 			Scanner kb = new Scanner(System.in);
-			System.out.println("\nInventory Filter Menu");
+			System.out.println("\n\nInventory Filter Menu");
 			System.out.println("_____________________\n");
 			
 			//filters are based on all CraftSupply types
@@ -112,14 +113,13 @@ public class InventoryScreen implements Screen{
 			//input fix: use nextLine so we can accept comma-separated inputs with spaces 
 			String ans = kb.nextLine().trim().toUpperCase();
 			
-			System.out.println("\n");
-			
 			if (ans.equals("I")) {
 				return;
 			}
 			
 			if (ans.equals("D")) {
 				activeFilters.clear();
+				System.out.println("\nAll filters cleared.");
 				return;
 			}
 			
@@ -138,7 +138,7 @@ public class InventoryScreen implements Screen{
 					
 					//error handling: bounds check 
 					if (idx < 1 || idx > filters.size()) { 
-						System.out.println("Invalid selection: " + token);
+						System.out.println("\nInvalid selection: " + token + "\n");
 						continue;
 					}
 					
@@ -162,9 +162,10 @@ public class InventoryScreen implements Screen{
 			
 			Scanner kb = new Scanner(System.in);
 			
-			System.out.println("Recommendation Generation Actions:\n"
+			System.out.println("\nRecommendation Generation Actions:\n"
 					+ "- Type a comma separated list of the numbers of certain craft supplies to generate specific recommendations\n"
-					+ "- Type‘E’ to generate craft recommendations for your entire inventory \n");
+					+ "- Type‘E’ to generate craft recommendations for your entire inventory \n\n"
+					+ "Your Answer: ");
 			
 			//input fix: nextLine + trim, supports '1,2,3' and avoids newLine skipping 
 			String answer = kb.nextLine().trim().toUpperCase();
@@ -172,10 +173,11 @@ public class InventoryScreen implements Screen{
 			//generate recommendations
 			Recommender rec = new Recommender(answer, this.inv, screens);
 			
-			System.out.println("Craft Recommendation Actions:\n"
+			System.out.println("\nCraft Recommendation Actions:\n"
 					+ "- Type ‘V’ to view a craft\n"
 					+ "- Type a comma separated list of the numbers of crafts that you would like to save\n"
-					+ "- Type ‘I’ to return to your inventory");
+					+ "- Type ‘I’ to return to your inventory\n"
+					+ "\nYour Answer: ");
 			
 			answer = kb.nextLine().trim().toUpperCase();
 			
@@ -242,7 +244,7 @@ public class InventoryScreen implements Screen{
 						int idx = Integer.parseInt(token);
 						
 						if (idx < 1 || idx > rec.recs.size()) {
-							System.out.println("Invalid craft number: " + token);
+							System.out.println("\nInvalid craft number: " + token);
 							continue;
 						}
 						
@@ -253,17 +255,17 @@ public class InventoryScreen implements Screen{
 						
 					} catch (NumberFormatException e) {
 						//non-numeric token handling 
-						System.out.println("Invalid craft number: " + token);
+						System.out.println("\nInvalid craft number: " + token);
 					}
 				}
 				
 				//confirmation message 
 				if (savedCount == 1) 
-					System.out.println("Saved 1 craft.");
+					System.out.println("\nSaved 1 craft.");
 				else if (savedCount > 1)
-					System.out.println("Saved " + savedCount + " crafts.");
+					System.out.println("\nSaved " + savedCount + " crafts.");
 				else 
-					System.out.println("No crafts were saved.");
+					System.out.println("\nNo crafts were saved.");
 			}
 		}	
 }
