@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public class Recommender {
 	
+	//still have error where imperfect crafts are printed in perfect condition, may need to separate lists but need to check with other functions
 	ArrayList<Craft> recs = new ArrayList<Craft>();
 	
 	public Recommender(String input, Inventory inv, Screen[] screens) {
@@ -13,9 +14,11 @@ public class Recommender {
 		
 		System.out.println("\n");
 		
+		Boolean perfect = false;
+		Boolean imperfect = false;
+		
 		//case: use entire inv
 		if (input.equals("E")) {
-			
 			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
 				
 				String[] materials = craft.getMaterials();
@@ -29,21 +32,18 @@ public class Recommender {
 				
 				//exact match
 				if (count==0) {
-					System.out.println(craft);
 					recs.add(craft);
+					perfect = true;
 				}
 				
 				//+1 or +2 materials
 				else if (count ==1 || count==2) {
-					System.out.println("  " + craft.specialPrint(inv));
 					recs.add(craft);
-				}
-				
-				else {
-					System.out.println("Sorry, we could not find any crafts that match your criteria.");
+					imperfect = true;
 				}
 			}
 		}
+			
 		//user selects subset
 		
 		else {
@@ -80,6 +80,7 @@ public class Recommender {
 //				System.out.println(item);
 //			}
 			
+			
 			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
 				
 				String[] materials = craft.getMaterials();
@@ -93,16 +94,43 @@ public class Recommender {
 				
 				//exact match
 				if (count==0) {
-					System.out.println(craft);
 					recs.add(craft); //fix: storing craft
+					perfect = true;
+					
 				}
 				
 				//+1 or 2 materials 
 				else if (count == 1 || count == 2) {
-					System.out.println("  " + craft.specialPrint(inv));
 					recs.add(craft);
+					imperfect = true;		
 				}
 			}
+		}
+		if (perfect) {
+			if (recs.size()==0){
+				System.out.println("Here is a craft recommendation:");
+			}
+			else {
+				System.out.println("Here are "+Integer.toString(recs.size())+" craft recommendations:");
+			}
+			for (Craft craft: recs) {
+				System.out.println(craft);
+			}
+		}
+		else if (imperfect) {
+			System.out.println("We could not find any crafts that perfectly match your criteria.");
+			if (recs.size()==0){
+				System.out.println("Here is a craft that require a few additional materials. We *starred* these new materials in your results.");
+			}
+			else {
+				System.out.println("Here are "+Integer.toString(recs.size())+" crafts that require a few additional materials. We *starred* these new materials in your results.");
+			}
+			for (Craft craft: recs) {
+				System.out.println("  " + craft.specialPrint(inv));
+			}
+		}
+		else {
+			System.out.println("Sorry, we could not find any crafts that match your criteria.");
 		}
 		
 	}

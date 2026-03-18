@@ -73,12 +73,14 @@ public class Inventory {
 	//prints contents of inventory
 	public void printItems(ArrayList<String> activeFilters) {
 		boolean results = false;
+		int i = 1;
 		for (CraftSupply item : items){
 			//If active filters is empty or 
 			//if the item's type is within the active filters, print it out
 			if (activeFilters.isEmpty() || activeFilters.contains(item.getType())) {
 				results = true;
-				System.out.println(item);
+				System.out.println(Integer.toString(i)+". " +item);
+				i++;
 			}
 		}
 		
