@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class CatalogScreen implements Screen {
 	
 	//catalog has an ArrayList of its catalogItems
+	//NEEDS TO BECOME NOT OF CRAFTS
 	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
 	
 	//get the user's inventory (items are static)
@@ -29,6 +30,7 @@ public class CatalogScreen implements Screen {
 	
 	//constructor makes the catalog
 	public CatalogScreen(){
+		//THIS FUNCTION MUST BE ALTERED
 		genCatalogItems();
 	}
 	
@@ -100,11 +102,13 @@ public class CatalogScreen implements Screen {
 		String ans = kb.nextLine().trim().toUpperCase();
 		
 		if(ans.equals("C")) {
+			kb.close();
 			return;
 		}
 		if (ans.equals("D")) {
 			activeFilters.clear(); 
 			System.out.println("\nAll filters cleared.");
+			kb.close();
 			return;
 		}
 		
@@ -139,6 +143,7 @@ public class CatalogScreen implements Screen {
 		
 		//replace old filters with new selection
 		activeFilters = newFilters;
+		kb.close();
 	}
 	
 	private ArrayList<String> getCatalogCategories() {
@@ -214,11 +219,13 @@ public class CatalogScreen implements Screen {
 	
 	//makes a catalog full of craft objects
 	private void genCatalogItems() {
+		//EITHER USE NEW CSV OR CHANGE CONTENTS
 		String filePath = "catalog.csv";
         String line;
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while((line = br.readLine()) != null) {
+            	//SHOULD NOT BE CRAFTS
             	Craft c = new Craft(line);
                 this.catalogItems.add(c);
             }
@@ -227,6 +234,7 @@ public class CatalogScreen implements Screen {
         }
 	}
 	
+	//SHOULD NOT BE CRAFTS
 	public ArrayList<Craft> getItems(){
 		return this.catalogItems;
 	}

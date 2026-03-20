@@ -19,6 +19,8 @@ public class Recommender {
 		
 		//case: use entire inv
 		if (input.equals("E")) {
+			//THIS NEEDS TO USE SOMETHING OTHER THAN CATALOGSCREEN TO ACCESS CRAFTS
+			//MUST CREATE SOMETHING THAT PROCESSES ALL THE CRAFTS
 			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
 				
 				String[] materials = craft.getMaterials();
