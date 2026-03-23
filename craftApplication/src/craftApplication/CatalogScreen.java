@@ -14,6 +14,7 @@ public class CatalogScreen implements Screen {
 	
 	//catalog has an ArrayList of its catalogItems
 	//NEEDS TO BECOME NOT OF CRAFTS
+	//test push 
 	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
 	
 	//get the user's inventory (items are static)
