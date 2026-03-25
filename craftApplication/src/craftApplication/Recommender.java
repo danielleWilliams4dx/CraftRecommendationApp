@@ -74,15 +74,33 @@ public class Recommender {
 			}
 		}
 		
-		//No matches at all
+		//If no perf match exist, show close matches (+1/+2 missing materials)
+		else if (!closeRecs.isEmpty()) {
+			recs.addAll(closeRecs);
+			
+			System.out.println("We could not find any crafts that perfectly match your criteria.");
+			
+			if (closeRecs.size() == 1) {
+				System.out.println("Here is 1 close match to your criteria.");
+			} else {
+				System.out.println("Here are " + closeRecs.size() + " close matches to your criteria");
+			}
+			
+			System.out.println("Additional supplies that you need are *starred*\n");
+			
+			for (int i = 0; i< closeRecs.size(); i++) {
+				System.out.println(closeRecs.get(i).toStringWithIndex(i + 1, availableItemNames));
+			}
+			
+		}
 		
 		else {
-			System.out.println("Sorry we could not find any crafts that match your criteria.");
+			System.out.println("Sorry, we could not find any crafts that match your criteria.");
 		}
 	}
 	
 	//Lets InvScreen view rec details with the correct starred materials
-	public ArrayList<String> getAvailableItems() {
+	public ArrayList<String> getAvailableItemNames() {
 		return new ArrayList<String>(availableItemNames);
 	}
 	
@@ -95,6 +113,7 @@ public class Recommender {
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			while ((line = br.readLine()) != null) {
 				if (line.trim().isEmpty());
+				crafts.add(new Craft (line));
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
