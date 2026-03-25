@@ -181,7 +181,7 @@ public class Recommender {
 		return cleaned;
 	}
 	
-	//Count how many materials from a craft are missing from the supplied item list 
+	//Count how many materials from a craft are missing from the supplied item listt
 	private int countMissingMaterials(Craft craft, ArrayList<String> availableItems) {
 		int count = 0;
 		
