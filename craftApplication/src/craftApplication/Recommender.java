@@ -8,6 +8,7 @@ import java.io.FileReader;
 
 
 public class Recommender {
+	//
 	
 	//stores current recs so InventoryScreen can view/save them
 	ArrayList<Craft> recs = new ArrayList<Craft>();
@@ -167,6 +168,7 @@ public class Recommender {
 				count++;
 			}
 		}
+		
 		
 		return count;
 	}
