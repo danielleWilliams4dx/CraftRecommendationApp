@@ -107,7 +107,7 @@ public class Inventory {
 	}
 	
 	//returns the visible inv names in the same idx order the user sees 
-	public ArrayList<String> getVisisbleItemNames(ArrayList<String> activeFilters) {
+	public ArrayList<String> getVisibleItemNames(ArrayList<String> activeFilters) {
 		ArrayList<String> visible = new ArrayList<String>();
 		
 		for (CraftSupply item : items) {
