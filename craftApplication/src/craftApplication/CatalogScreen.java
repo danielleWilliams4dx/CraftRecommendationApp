@@ -9,16 +9,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Scanner;
 
-
+//
 public class CatalogScreen implements Screen {
 	
-	//catalog has an ArrayList of its catalogItems
-	//NEEDS TO BECOME NOT OF CRAFTS
-	//test push 
-	ArrayList<Craft> catalogItems = new ArrayList<Craft>();
-	
-	//get the user's inventory (items are static)
-	Inventory inv = new Inventory();
+    //catalog stores supply items, not crafts
+	ArrayList<CraftSupply> catalogItems = new ArrayList<CraftSupply>();
 	
 	//Active filters 
 	private ArrayList<String> activeFilters = new ArrayList<String>();
@@ -33,6 +28,7 @@ public class CatalogScreen implements Screen {
 	public CatalogScreen(){
 		//THIS FUNCTION MUST BE ALTERED
 		genCatalogItems();
+		sortCatalog();
 	}
 	
 	//display function
@@ -45,12 +41,12 @@ public class CatalogScreen implements Screen {
 		if (activeFilters.isEmpty()) {
 			System.out.println("Filter (F)\n");
 		} else {
-			System.out.println("Filter (F) [Active: " + String.join(", ", activeFilters) + "]\n");
+			System.out.println("Filter (F) | " + String.join(", ", activeFilters) + "\n");
 		}
 		
 		printCat();
-		System.out.println(navActions+"\n");
-		System.out.println(catActions+"\n");
+		System.out.println("\n" + navActions+"\n");
+		System.out.println(catActions+ "\n");
 		System.out.println("Your Answer: ");
 	}
 	
@@ -76,40 +72,54 @@ public class CatalogScreen implements Screen {
 			this.disp();
 			return screens[2];
 		}
-		//Any other input: treating as the "view craft" selection by number
-		viewSelectedCrafts(input);
+		
+		//Any other input: treating as catalog supply selection
+		addSelectedSupplies(input);
         this.disp();
 		return screens[2];
 	}
 	
+	private void sortCatalog() {
+		Collections.sort(catalogItems, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+	}
+	
+	
+	//Filter Flow: 
+	//- choose category numbers
+	//- D clears all the filters 
+	// - C returns without changing filters
 	private void runFilterMenu() {
-		
 		Scanner kb = new Scanner(System.in);
 		
 		//Building a list of unique "categories" from the catalog 
 		ArrayList<String> categories = getCatalogCategories();
-		System.out.println("\n\nCatalog Filter Menu");
-		System.out.println("_____________________\n");
-		System.out.println("Select one or more categories (comma-separated)");
-		System.out.println("Type 'D' to clear filters.");
-		System.out.println("Type 'C' to return to Catalog without changes.\n");
+		
+		System.out.println("\n");
+		System.out.println(navBar);
+		System.out.println("Catalog");
+		System.out.println("_______");
+		System.out.println("Filter by:\n");
 		
 		//show selectable filter options (1-based)
 		for (int i = 0; i < categories.size(); i++) {
-			System.out.println((i + 1 ) + ") " + categories.get(i)); 
+			System.out.println("   " + (i + 1 ) + ") " + categories.get(i)); 
 		}
 		
-		System.out.println("\nYour Answer: ");
+		System.out.println("\n" + navActions + "\n");
+		System.out.println("Filter Actions:");
+		System.out.println("- Type a comma separated list of the numbers of your desired filters");
+		System.out.println("- Type 'D' to delete all filters");
+		System.out.println("- Type 'C' to return to the catalog\n");
+		System.out.println("Your Answer: ");
+		
 		String ans = kb.nextLine().trim().toUpperCase();
 		
 		if(ans.equals("C")) {
-			kb.close();
 			return;
 		}
+		
 		if (ans.equals("D")) {
 			activeFilters.clear(); 
-			System.out.println("\nAll filters cleared.");
-			kb.close();
 			return;
 		}
 		
@@ -144,99 +154,176 @@ public class CatalogScreen implements Screen {
 		
 		//replace old filters with new selection
 		activeFilters = newFilters;
-		kb.close();
 	}
 	
+	//Builds the category list for the filter menu
 	private ArrayList<String> getCatalogCategories() {
 		HashSet<String> set = new HashSet<String>();
-		for (Craft c : catalogItems) {
-			//Craft Types as the category for filtering 
-			String s = c.toString(); //extracting Type Line
-			String type = extractTypeFromString(s);
-			if (type != null && !type.isEmpty()) set.add(type);
+		for (CraftSupply c : catalogItems) {
+			//Craft Types as the category for filtering
+			if (c.getType() != null && !c.getType().isEmpty()) {
+				set.add(c.getType());
+			}
 		}
 		ArrayList<String> out = new ArrayList<String>(set);
 		Collections.sort(out);
 		return out;
 	}
 	
-	private String extractTypeFromString(String s) {
-		//Craft.toStringIndex prints like a "Type: <type>"
-		for (String line: s.split("\\n")) {
-			line = line.trim();
-			if (line.startsWith("Type:")) return line.substring("Type:".length()).trim();
-			if (line.startsWith("Type")) {
-				int idx = line.indexOf(":");
-				if (idx >= 0) 
-					return line.substring(idx+1).trim();
-				
-			}
-		}
-		return "";
-	}
-	
-	private void viewSelectedCrafts(String input) {
-		String[] nums = input.split(",");
-		HashSet<Integer> seen = new HashSet<Integer>();
-		System.out.println();
-		
-		for (String number : nums) {
-			String token = number.trim();
-			if (token.isEmpty()) continue;
-			try {
-				int idx = Integer.parseInt(token);
-				if (!seen.add(idx)) continue;
-				Craft c = getFilteredCatalog().get(idx-1);
-				System.out.println(c.toStringWithIndex(idx, inv));
-			} catch (Exception e) {
-				System.out.println("Invalid selection: " + token + "\n");
-			}
-		}
-	}
-	
-	private ArrayList<Craft> getFilteredCatalog() {
+	private ArrayList<CraftSupply> getFilteredCatalog() {
 		if (activeFilters.isEmpty()) return catalogItems;
 		
-		ArrayList<Craft> filtered = new ArrayList<Craft>(); 
-		for (Craft c : catalogItems) {
-			String type = extractTypeFromString(c.toString());
-			if (activeFilters.contains(type)) filtered.add(c);
+		ArrayList<CraftSupply> filtered = new ArrayList<CraftSupply>();
+		for (CraftSupply c : catalogItems) {
+			if (activeFilters.contains(c.getType())) {
+				filtered.add(c);
+			}
 		}
 		return filtered;
+	}
+	
+	
+
+	//Add-to-ionventory flow:
+	//supports single/multiple selections, spaces like "1, 2, 3" 
+	//duplicate protection, extra prompts, singular plural confirmation messages 
+	private void addSelectedSupplies(String input) {
+		Scanner kb = new Scanner(System.in);
+		
+		//refresh inv before checking duplicates 
+		new Inventory();
+		
+		ArrayList<CraftSupply> filtered = getFilteredCatalog();
+		HashSet<Integer> seen = new HashSet<Integer>();
+		
+		String[] nums = input.split(",");
+		int addedCount = 0;
+		String singleAddedName = "";
+		
+		for (String number: nums) {
+			String token = number.trim();
+			if (token.isEmpty()) continue;
+			
+			try {
+				int idx = Integer.parseInt(token);
+				
+				if (idx < 1 || idx > filtered.size()) {
+					System.out.println("\nInvalid selection: " + token);
+					continue;
+				}
+				
+				//ignore duplicate input 
+				if (!seen.add(idx)) {
+					continue;
+				}
+				
+				CraftSupply selected = filtered.get(idx - 1);
+				
+				String color = "";
+				String quantity = "";
+				String size = "";
+				
+				if (selected.needsColor() || selected.needsQuantity() || selected.needsSize()) {
+					System.out.println("\n[" + selected.getName() + "] requires some additional information:");
+				}
+				
+				if (selected.needsColor()) {
+					System.out.print("Color: ");
+					color = kb.nextLine().trim();
+				}
+				
+				if (selected.needsQuantity()) {
+					System.out.print("Quantity: ");
+					quantity = kb.nextLine().trim();
+				}
+				
+				if (selected.needsSize()) {
+					System.out.print("Size: ");
+					size = kb.nextLine().trim();
+				}
+				
+				//Final inv. item with any entered attributes
+				CraftSupply itemToAdd = new CraftSupply(
+						selected.getName(),
+						selected.getType(),
+						color,
+						quantity, 
+						size
+				);
+				
+				//prevent exact duplicates 
+				if (!Inventory.items.contains(itemToAdd)) {
+					Inventory.items.add(itemToAdd);
+					
+					//raw supply names for recommender
+					if (!Inventory.justItemNames.contains(itemToAdd.getName().toLowerCase().trim())) {
+						Inventory.justItemNames.add(itemToAdd.getName().toLowerCase().trim());
+					}
+					
+					appendToInventoryFile(itemToAdd);
+					
+					addedCount++;
+					singleAddedName = selected.getName();
+				}
+			
+			}  catch (NumberFormatException e ) {
+				System.out.println("\nInvalid selection: " + token);
+			}
+		}
+		
+		Collections.sort(Inventory.items, (a,b) -> a.getName().compareToIgnoreCase(b.getName()));
+		
+		System.out.println();
+		if (addedCount == 1) {
+			System.out.println("[" + singleAddedName + "] was successfully added to your inventory]");
+		}
+		else if (addedCount > 1) {
+			System.out.println("[" + addedCount + "] craft supplies were added to your inventory]");
+		}
+		else {
+			System.out.println("No supplies were added to your inventory]");
+		}
+	}
+	
+	private void appendToInventoryFile(CraftSupply item) {
+		try (FileWriter fw = new FileWriter("inventory.csv", true)) {
+			fw.append(item.toInventoryFileLine()).append(System.lineSeparator());
+		} catch (IOException e ) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 
 	//prints contents of catalog
 	private void printCat() {
-		ArrayList<Craft> list = getFilteredCatalog();
+		ArrayList<CraftSupply> list = getFilteredCatalog();
 		if(list.isEmpty()) {
 			System.out.println("(No items match your filter.)\n");
 			return;
 		}
 		for (int i = 0; i< list.size(); i++){
-			System.out.println(list.get(i).toStringWithIndex(i+1, inv));
+			System.out.println(list.get(i).toStringWithIndex(i+1));
 		}
 	}
 	
 	//makes a catalog full of craft objects
 	private void genCatalogItems() {
 		//EITHER USE NEW CSV OR CHANGE CONTENTS
-		String filePath = "catalog.csv";
+		String filePath = "materialcatalog.csv";
         String line;
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while((line = br.readLine()) != null) {
-            	//SHOULD NOT BE CRAFTS
-            	Craft c = new Craft(line);
-                this.catalogItems.add(c);
+            	if (line.trim().isEmpty()) continue;
+            	CraftSupply cs = new CraftSupply(line);
+                catalogItems.add(cs);
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
 	}
 	
-	//SHOULD NOT BE CRAFTS
-	public ArrayList<Craft> getItems(){
+	public ArrayList<CraftSupply> getItems(){
 		return this.catalogItems;
 	}
 }
