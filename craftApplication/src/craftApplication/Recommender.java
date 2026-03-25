@@ -15,14 +15,14 @@ public class Recommender {
 	
     //stores the exact supply names used to generate the current recs
 	//lets recommendation printing star missing items correctly for both 
-	// E ()full inv mode
+	// (E) full inv mode
     // subset mode (1,2,3)	
 	private ArrayList<String> availableItemNames = new ArrayList<String>();
 	
 	
 	//input = "E" or comma-seperated indices
-	//inv = full inv object
-	//visible ItemNames = item names in the same order the user sees on the Inv screen 
+	//inv = full inventory object
+	//visibleItemNames = item names in the same order the user sees on the Inv screen 
 	
 	public Recommender(String input, Inventory inv, ArrayList<String> visibleItemNames) {
 		
@@ -34,10 +34,12 @@ public class Recommender {
 		System.out.println("\n");
 		
 		
-		//Generate recs using the full inv
+		//Generate recommendations using the full inventory
 		if (input.equals("E")) {
 			availableItemNames = normalizeNames(inv.getJustItemNames());
 		}
+		
+		//Generate recommendations using the full inventory
 		else {
 			availableItemNames = buildSelectedItems(input, visibleItemNames);
 			
@@ -94,6 +96,8 @@ public class Recommender {
 			
 		}
 		
+		
+		//No matches at all
 		else {
 			System.out.println("Sorry, we could not find any crafts that match your criteria.");
 		}
