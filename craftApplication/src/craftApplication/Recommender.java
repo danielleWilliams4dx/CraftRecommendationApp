@@ -1,139 +1,177 @@
 package craftApplication;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.FileReader;
+
 
 public class Recommender {
 	
-	//still have error where imperfect crafts are printed in perfect condition, may need to separate lists but need to check with other functions
+	//stores current recs so InventoryScreen can view/save them
 	ArrayList<Craft> recs = new ArrayList<Craft>();
 	
-	public Recommender(String input, Inventory inv, Screen[] screens) {
+    //stores the exact supply names used to generate the current recs
+	//lets recommendation printing star missing items correctly for both 
+	// E ()full inv mode
+    // subset mode (1,2,3)	
+	private ArrayList<String> availableItemNames = new ArrayList<String>();
+	
+	
+	//input = "E" or comma-seperated indices
+	//inv = full inv object
+	//visible ItemNames = item names in the same order the user sees on the Inv screen 
+	
+	public Recommender(String input, Inventory inv, ArrayList<String> visibleItemNames) {
 		
-		ArrayList<String> justItemNames = inv.getJustItemNames();
+		ArrayList<Craft> allCrafts = loadCrafts();
+		
+		ArrayList<Craft> perfectRecs = new ArrayList<Craft>();
+		ArrayList<Craft> closeRecs = new ArrayList<Craft>();
 		
 		System.out.println("\n");
 		
-		Boolean perfect = false;
-		Boolean imperfect = false;
 		
-		//case: use entire inv
+		//Generate recs using the full inv
 		if (input.equals("E")) {
-			//THIS NEEDS TO USE SOMETHING OTHER THAN CATALOGSCREEN TO ACCESS CRAFTS
-			//MUST CREATE SOMETHING THAT PROCESSES ALL THE CRAFTS
-			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
-				
-				String[] materials = craft.getMaterials();
-				int count = 0;
-				
-				for (String mat: materials) {			
-					if (!justItemNames.contains(mat.toLowerCase())){
-						count++;
-					}
-				}
-				
-				//exact match
-				if (count==0) {
-					recs.add(craft);
-					perfect = true;
-				}
-				
-				//+1 or +2 materials
-				else if (count ==1 || count==2) {
-					recs.add(craft);
-					imperfect = true;
-				}
-			}
-		}
-			
-		//user selects subset
-		
-		else {
-			
-			String[] itemsUsedIndices = input.split(",");
-			ArrayList<String> itemsUsed = new ArrayList<>();
-			
-			//Get all of the item names based on the inputed indices
-			//Modified code from viewCraftFlow on SavedCraftScreen
-			for(String index : itemsUsedIndices) {
-				
-				index = index.trim();
-				if(index.isEmpty()) {
-					continue;
-				}
-				
-				try {
-					int i = Integer.parseInt(index)-1;
-					if(i >= 0 && i < justItemNames.size()) {
-						itemsUsed.add(justItemNames.get(i).toLowerCase());
-					}else {
-						System.out.println("Invalid craft supply number: " + index + "\n");
-					}
-				} catch (NumberFormatException e) { 
-					//non-numeric token handling 
-					System.out.println("Invalid craft supply number: " + index + "\n");
-				}
-	
-			}
-			
-//			debugging
-//			System.out.println("itemsUsed: ");
-//			for(String item : itemsUsed) {
-//				System.out.println(item);
-//			}
-			
-			
-			for (Craft craft: ((CatalogScreen) screens[2]).getItems()) {
-				
-				String[] materials = craft.getMaterials();
-				int count = 0;
-				
-				for (String mat: materials) {
-					if (!itemsUsed.contains(mat.toLowerCase())){
-						count++;
-					}
-				}
-				
-				//exact match
-				if (count==0) {
-					recs.add(craft); //fix: storing craft
-					perfect = true;
-					
-				}
-				
-				//+1 or 2 materials 
-				else if (count == 1 || count == 2) {
-					recs.add(craft);
-					imperfect = true;		
-				}
-			}
-		}
-		if (perfect) {
-			if (recs.size()==0){
-				System.out.println("Here is a craft recommendation:");
-			}
-			else {
-				System.out.println("Here are "+Integer.toString(recs.size())+" craft recommendations:");
-			}
-			for (Craft craft: recs) {
-				System.out.println(craft);
-			}
-		}
-		else if (imperfect) {
-			System.out.println("We could not find any crafts that perfectly match your criteria.");
-			if (recs.size()==0){
-				System.out.println("Here is a craft that require a few additional materials. We *starred* these new materials in your results.");
-			}
-			else {
-				System.out.println("Here are "+Integer.toString(recs.size())+" crafts that require a few additional materials. We *starred* these new materials in your results.");
-			}
-			for (Craft craft: recs) {
-				System.out.println("  " + craft.specialPrint(inv));
-			}
+			availableItemNames = normalizeNames(inv.getJustItemNames());
 		}
 		else {
-			System.out.println("Sorry, we could not find any crafts that match your criteria.");
+			availableItemNames = buildSelectedItems(input, visibleItemNames);
+			
+			//Fail safely if something unexpected slipped through validation
+			if (availableItemNames.isEmpty()) {
+				System.out.println("Sorry, we could not generate recommendations from that selection.");
+				return;
+			}
+		}
+
+		for (Craft craft : allCrafts) {
+			int missing = countMissingMaterials(craft, availableItemNames);
+			
+			if (missing == 0) {
+				perfectRecs.add(craft);
+			}
+			else if (missing == 1 || missing == 2) {
+				closeRecs.add(craft);
+			}
 		}
 		
+		//Perfect matches come first
+		if (!perfectRecs.isEmpty()) {
+			recs.addAll(perfectRecs);
+			
+			if (perfectRecs.size() == 1) {
+				System.out.println("Here is a craft recommendation:\n");
+			} else {
+				System.out.println("Here are " + perfectRecs.size() + " craft recommendations:\n");
+			}
+			
+			for (int i = 0; i < perfectRecs.size(); i++) {
+				System.out.println(perfectRecs.get(i).toStringWithIndex(i + 1,  availableItemNames));
+			}
+		}
+		
+		//No matches at all
+		
+		else {
+			System.out.println("Sorry we could not find any crafts that match your criteria.");
+		}
 	}
+	
+	//Lets InvScreen view rec details with the correct starred materials
+	public ArrayList<String> getAvailableItems() {
+		return new ArrayList<String>(availableItemNames);
+	}
+	
+	//Crafts are still loaded from catalog.csv because it remains the craft dataset
+	private ArrayList<Craft> loadCrafts() {
+		ArrayList<Craft> crafts = new ArrayList<Craft>();
+		String filePath = "catalog.csv";
+		String line;
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			while ((line = br.readLine()) != null) {
+				if (line.trim().isEmpty())
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return crafts;
+	}
+	
+	//subset list from the inv numbers the user selected 
+	//if any token is invalid - fail closed and return empty list 
+	private ArrayList<String> buildSelectedItems(String input, ArrayList<String> visibleItemNames) {
+		ArrayList<String> itemsUsed = new ArrayList<String>();
+		HashSet<Integer> seenIndices = new HashSet<Integer>();
+		boolean invalidSelectionFound = false;
+		
+		String[] itemsUsedIndices = input.split(",");
+		
+		for (String index : itemsUsedIndices) {
+			String token = index.trim();
+			if(token.isEmpty()) continue;
+			
+
+			try {
+				int i = Integer.parseInt(token)-1;
+				
+				if(i >= 0 && i < justItemNames.size()) {
+					//ignmore duplicate index 
+					if (seenIndices.add(i)) {
+						itemsUsed.add(visibleItemNames.get(i).toLowerCase().trim());
+					}
+				} else {
+					invalidSelectionFound = true;
+				}
+			} catch (NumberFormatException e) { 
+				invalidSelectionFound = true;
+			}
+	
+		}
+		
+		if (invalidSelectionFound) {
+			itemsUsed.clear();
+		}
+		return normalizeNames(itemsUsed);
+	}
+	
+	//Normalize sipply names so rec matching stays case-imsensitive and clean
+	private ArrayList<String> normalizeNames(ArrayList<String> names) {
+		ArrayList<String> cleaned = new ArrayList<String>();
+		HashSet<String> seen = new HashSet<String>();
+		
+		for (String name: names) {
+			if (name == null) continue;
+			
+			String normalized = name.trim().toLowerCase();
+			
+			if(!normalized.isEmpty() && seen.add(normalized)) {
+				cleaned.add(normalized);
+			}
+		}
+		
+		return cleaned;
+	}
+	
+	//Count how many materials from a craft are missing from the supplied item list 
+	private int countMissingMaterials(Craft craft, ArrayList<String> availableItems) {
+		int count = 0;
+		
+		for (String mat : craft.getMaterials()) {
+			String cleaned = mat.trim().toLowerCase();
+			if(!availableItems.contains(cleaned)) {
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
 }
+		
+		
+			
