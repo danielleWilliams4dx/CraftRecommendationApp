@@ -8,7 +8,7 @@ import java.io.FileReader;
 
 
 public class Recommender {
-	//
+	
 	
 	//stores current recs so InventoryScreen can view/save them
 	ArrayList<Craft> recs = new ArrayList<Craft>();
@@ -94,7 +94,7 @@ public class Recommender {
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			while ((line = br.readLine()) != null) {
-				if (line.trim().isEmpty())
+				if (line.trim().isEmpty());
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -120,8 +120,8 @@ public class Recommender {
 			try {
 				int i = Integer.parseInt(token)-1;
 				
-				if(i >= 0 && i < justItemNames.size()) {
-					//ignmore duplicate index 
+				if(i >= 0 && i < visibleItemNames.size()) {
+					//ignore duplicate index 
 					if (seenIndices.add(i)) {
 						itemsUsed.add(visibleItemNames.get(i).toLowerCase().trim());
 					}
