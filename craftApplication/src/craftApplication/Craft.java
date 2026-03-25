@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class Craft {
-	
+	//test push
 	private String name;
 	private String type;
 	private String level;
@@ -47,8 +47,16 @@ public class Craft {
 	} 
 	
 	//fix: allowing screens to print correct numbering (1 based)
+	//when full inventory object is available
 	public String toStringWithIndex(int index, Inventory inv) {
 		return index + ")" + specialPrint(inv);
+	}
+	
+	//Overload used by recommendation subset mode
+	//lets the star missing materials based on only the selected supplies
+	// not the entire inventory 
+	public String toStringWithIndex(int index, ArrayList<String> availableItems) {
+		return index + ")" + specialPrint(availableItems);
 	}
 	
 	private String materialsString() {
@@ -71,16 +79,28 @@ public class Craft {
 		return this.line;
 	}
 	
-	//Star each missing item only once (no duplicates)
+	//uses the full inventory object 
 	public String specialPrint(Inventory inv) {
-		ArrayList<String> justItemNames = inv.getJustItemNames();
-		String s = " " + this.name + "\n"
+		return specialPrint(inv.getJustItemNames());
+	}
+	
+	//Star each missing item only once (no duplicates)
+	public String specialPrint(ArrayList<String> availableItems) {
+		HashSet<String> availableSet = new HashSet<String>();
+		
+		for (String item : availableItems) {
+			if (item != null) {
+				availableSet.add(item.trim().toLowerCase());
+			}
+		}
+		
+		String s  = " " + this.name + "\n"
 				+ "   Type: " + this.type + "\n"
 				+ "   Materials:\n   ";
 		
 		for (String item: this.materials) {
 			String cleaned = item.trim();
-			if (justItemNames.contains(cleaned.toLowerCase())) {
+			if (availableSet.contains(cleaned.toLowerCase())) {
 				s += cleaned + " ";
 			} else {
 				s += "*" + cleaned + "* ";
