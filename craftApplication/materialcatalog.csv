@@ -1,10 +1,10 @@
-Acrylic Paint 
-Beads 
-Bristol Board 
-Canvas 
-Fabric 
-Glue 
-Markers 
-Needle 
-Thread 
-Watercolor Paint 
+Acrylic Paint,Painting,true,false,false
+Beads,Jewelry,true,true,false
+Bristol Board,Paper,false,false,false
+Canvas,Painting,false,false,true
+Fabric,Sewing,true,false,true
+Glue,Adhesives,false,false,false
+Markers,Drawing,false,false,false
+Needle,Tools,false,false,false
+Thread,Sewing,true,true,false
+Watercolor Paint,Painting,false,false,false
