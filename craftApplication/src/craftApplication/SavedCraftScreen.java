@@ -18,6 +18,7 @@ public class SavedCraftScreen implements Screen {
 	public void disp() {
 		
 		loadSavedCrafts();
+		inv = new Inventory();
 		
 		System.out.println("\n");
 		System.out.println(navBar);
@@ -78,12 +79,15 @@ public class SavedCraftScreen implements Screen {
 		}
 	}
 	
+
 	public void printCrafts() {
 		if(savedCrafts.isEmpty()) {
 			System.out.println("(You have no saved crafts yet.)\n");
 			return;
 		}
+		
 		System.out.println("Additional supplies that you need are *starred*\n");
+		
 		for (int i = 0; i < savedCrafts.size(); i++) {
 			System.out.println(savedCrafts.get(i).toStringWithIndex(i+1, inv));
 		}
@@ -106,10 +110,12 @@ public class SavedCraftScreen implements Screen {
 			
 			try {
 				int idx = Integer.parseInt(input);
-				if (idx<1 || idx > savedCrafts.size()) {
+				
+				if (idx < 1 || idx > savedCrafts.size()) {
 					System.out.println("\nInvalid craft number. Please try again.");
 					continue;
 				}
+				
 				System.out.println("\n\n" + savedCrafts.get(idx-1).toStringWithIndex(idx, inv));
 				success = true;
 				
