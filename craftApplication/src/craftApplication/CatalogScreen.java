@@ -275,13 +275,13 @@ public class CatalogScreen implements Screen {
 		
 		System.out.println();
 		if (addedCount == 1) {
-			System.out.println("[" + singleAddedName + "] was successfully added to your inventory]");
+			System.out.println("[" + singleAddedName + "] was successfully added to your inventory");
 		}
 		else if (addedCount > 1) {
-			System.out.println("[" + addedCount + "] craft supplies were added to your inventory]");
+			System.out.println("[" + addedCount + "] craft supplies were added to your inventory");
 		}
 		else {
-			System.out.println("No supplies were added to your inventory]");
+			System.out.println("No supplies were added to your inventory");
 		}
 	}
 	

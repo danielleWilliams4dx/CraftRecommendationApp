@@ -66,7 +66,7 @@ public class Recommender {
 			recs.addAll(perfectRecs);
 			
 			if (perfectRecs.size() == 1) {
-				System.out.println("Here is a craft recommendation:\n");
+				System.out.println("Here is 1 craft recommendation:\n");
 			} else {
 				System.out.println("Here are " + perfectRecs.size() + " craft recommendations:\n");
 			}
@@ -79,8 +79,6 @@ public class Recommender {
 		//If no perf match exist, show close matches (+1/+2 missing materials)
 		else if (!closeRecs.isEmpty()) {
 			recs.addAll(closeRecs);
-			
-			System.out.println("We could not find any crafts that perfectly match your criteria.");
 			
 			if (closeRecs.size() == 1) {
 				System.out.println("Here is 1 close match to your criteria.");
