@@ -1,10 +1,22 @@
-Acrylic Paint,Painting,true,false,false
-Beads,Jewelry,true,true,false
-Bristol Board,Paper,false,false,false
-Canvas,Painting,false,false,true
-Fabric,Sewing,true,false,true
-Glue,Adhesives,false,false,false
-Markers,Drawing,false,false,false
-Needle,Tools,false,false,false
-Thread,Sewing,true,true,false
-Watercolor Paint,Painting,false,false,false
+Glue Stick, Adhesives, false, false, false
+Hot Glue, Adhesives, false, false, false
+Duct Tape, Adhesives, true, false, false
+Craft Glue, Adhesives, false, false, false
+Beads, Jewelry, true, true, true
+Fish Hook Earwires, Jewelry, true, true, false
+Stretch Jewelry Cord, Jewelry, false, false, true
+Alcohol Ink Markers, Drawing, false, false, false
+Felt Tip Pens, Drawing, false, false, false
+Colored Pencils, Drawing, false, false, false
+Watercolor Paint, Painting, true, false, false
+Acrylic Paint, Painting, true, false, false
+Paint Brush, Painting, false, false, true
+Canvas, Painting, false, false, true
+Construction Paper, Paper, true, false, true
+Watercolor Paper, Paper, false, false, true 
+Bristol Board, Paper, false, false, true
+Sewing Kit, Sewing, false, false, false
+Felt, Sewing, true, false, false
+Embroidery Floss, Sewing, true, false, false
+Sewing Needle, Sewing, false, false, false
+Thread, Sewing, true, false, false

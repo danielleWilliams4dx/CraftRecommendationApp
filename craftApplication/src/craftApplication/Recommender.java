@@ -29,7 +29,10 @@ public class Recommender {
 		ArrayList<Craft> allCrafts = loadCrafts();
 		
 		ArrayList<Craft> perfectRecs = new ArrayList<Craft>();
-		ArrayList<Craft> closeRecs = new ArrayList<Craft>();
+		ArrayList<Craft> closeRecsPlus1 = new ArrayList<Craft>();
+		ArrayList<Craft> closeRecsPlus2 = new ArrayList<Craft>();
+		
+		ArrayList<String> allInventoryItemNames = normalizeNames(inv.getJustItemNames());
 		
 		System.out.println("\n");
 		
@@ -39,7 +42,7 @@ public class Recommender {
 			availableItemNames = normalizeNames(inv.getJustItemNames());
 		}
 		
-		//Generate recommendations using the full inventory
+		//Generate recommendations using the user input
 		else {
 			availableItemNames = buildSelectedItems(input, visibleItemNames);
 			
@@ -51,13 +54,30 @@ public class Recommender {
 		}
 
 		for (Craft craft : allCrafts) {
-			int missing = countMissingMaterials(craft, availableItemNames);
+			int[] res = countMissingMaterials(craft, availableItemNames, allInventoryItemNames);
+			int missing = res[0];
+			int matInInv = res[1];
 			
 			if (missing == 0) {
 				perfectRecs.add(craft);
 			}
-			else if (missing == 1 || missing == 2) {
-				closeRecs.add(craft);
+			// if the material is not in the selection but is in the inventory, 
+			// add it to the front of the recommendation tier
+			else if (missing == 1) {
+				if(matInInv == 1) {
+					closeRecsPlus1.add(0, craft);
+				}
+				else {
+					closeRecsPlus1.add(craft);
+				}
+			}
+			else if (missing == 2) {
+				if(matInInv == 1) {
+					closeRecsPlus2.add(0, craft);
+				}
+				else {
+					closeRecsPlus2.add(craft);
+				}
 			}
 		}
 		
@@ -71,25 +91,29 @@ public class Recommender {
 				System.out.println("Here are " + perfectRecs.size() + " craft recommendations:\n");
 			}
 			
-			for (int i = 0; i < perfectRecs.size(); i++) {
-				System.out.println(perfectRecs.get(i).toStringWithIndex(i + 1,  availableItemNames));
+			for (int i = 0; i < recs.size(); i++) {
+				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
 		}
 		
 		//If no perf match exist, show close matches (+1/+2 missing materials)
-		else if (!closeRecs.isEmpty()) {
-			recs.addAll(closeRecs);
+		else if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
+			recs.addAll(closeRecsPlus1);
+			recs.addAll(closeRecsPlus2);
 			
-			if (closeRecs.size() == 1) {
+			int totalCloseRecsSize = closeRecsPlus1.size() + closeRecsPlus2.size();
+			
+			if (totalCloseRecsSize == 1) {
 				System.out.println("Here is 1 close match to your criteria.");
 			} else {
-				System.out.println("Here are " + closeRecs.size() + " close matches to your criteria");
+				System.out.println("Here are " + totalCloseRecsSize + " close matches to your criteria");
 			}
 			
 			System.out.println("Additional supplies that you need are *starred*\n");
 			
-			for (int i = 0; i< closeRecs.size(); i++) {
-				System.out.println(closeRecs.get(i).toStringWithIndex(i + 1, availableItemNames));
+			// Use the inventory to print crafts so that additional materials that are in the inventory aren't starred
+			for (int i = 0; i< recs.size(); i++) {
+				System.out.println(recs.get(i).toStringWithIndex(i + 1, allInventoryItemNames));
 			}
 			
 		}
@@ -179,19 +203,24 @@ public class Recommender {
 		return cleaned;
 	}
 	
-	//Count how many materials from a craft are missing from the supplied item listt
-	private int countMissingMaterials(Craft craft, ArrayList<String> availableItems) {
+	//Count how many materials from a craft are missing from the supplied item list
+	private int[] countMissingMaterials(Craft craft, ArrayList<String> availableItems , ArrayList<String> allInventoryItems) {
 		int count = 0;
+		int matInInv = 0;
 		
 		for (String mat : craft.getMaterials()) {
 			String cleaned = mat.trim().toLowerCase();
 			if(!availableItems.contains(cleaned)) {
 				count++;
+				// Note it the material is not in the material selection but is in the inventory
+				if(allInventoryItems.contains(cleaned)) {
+					matInInv = 1;
+				}
 			}
 		}
 		
-		
-		return count;
+		int[] res = {count, matInInv};
+		return res;
 	}
 	
 }

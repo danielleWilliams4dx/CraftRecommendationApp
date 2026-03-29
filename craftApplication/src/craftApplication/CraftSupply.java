@@ -128,7 +128,7 @@ public class CraftSupply {
 			result += " | Qty: " + quantity;
 		}
 		if (!size.isEmpty()) {
-			result += " | Size: " + quantity;
+			result += " | Size: " + size;
 		}
 		
 		return result;
