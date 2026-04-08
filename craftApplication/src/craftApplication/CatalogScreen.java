@@ -236,6 +236,10 @@ public class CatalogScreen implements Screen {
 					System.out.print("Quantity: ");
 					quantity = kb.nextLine().trim();
 				}
+				//defines a default quantity of 1
+				else {
+					quantity = "1";
+				}
 				
 				if (selected.needsSize()) {
 					System.out.print("Size: ");
@@ -264,6 +268,10 @@ public class CatalogScreen implements Screen {
 					
 					addedCount++;
 					singleAddedName = selected.getName();
+				}
+				//increase count of duplicates
+				else {
+					//add quantity of new to quantity in CSV
 				}
 			
 			}  catch (NumberFormatException e ) {

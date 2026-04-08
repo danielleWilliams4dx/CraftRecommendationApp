@@ -148,7 +148,7 @@ public class InventoryScreen implements Screen{
 					
 			} catch (NumberFormatException e) {
 				//ERR handling: non-numeric token 
-				System.out.println("Invalid selection " + token);
+				System.out.println("\nInvalid selection " + token);
 					
 			}
 		}

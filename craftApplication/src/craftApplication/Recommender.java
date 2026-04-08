@@ -1,6 +1,7 @@
 package craftApplication;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.HashSet;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,6 +83,7 @@ public class Recommender {
 		}
 		
 		//Perfect matches come first
+		Boolean showMore = false;
 		if (!perfectRecs.isEmpty()) {
 			recs.addAll(perfectRecs);
 			
@@ -94,10 +96,17 @@ public class Recommender {
 			for (int i = 0; i < recs.size(); i++) {
 				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
+			//check if user wants more matches
+			Scanner kb =new Scanner(System.in);
+			System.out.println("Type 'Y' to show close matches");
+			if (kb.next().toUpperCase().equals("Y")){
+				showMore = true;
+			}
+			
 		}
 		
 		//If no perf match exist, show close matches (+1/+2 missing materials)
-		else if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
+		else if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()||showMore) {
 			recs.addAll(closeRecsPlus1);
 			recs.addAll(closeRecsPlus2);
 			
