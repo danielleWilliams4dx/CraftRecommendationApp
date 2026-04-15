@@ -2,11 +2,18 @@ package craftApplication;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+//Changes:
+//NEW getVisibleItems(): returns full CraftSupply objects (not just names )
+// NEW updateItem(): swaps one item and rewrites the file
+//NEW deleteItems(): removes one or more items and rewrites the file
+// New rewriteInventoryFile(): overwrites inventory.csv from scratch; used by edit and delete
 public class Inventory {
+	
 	//inventory has an ArrayList of items
 	static ArrayList<CraftSupply> items = new ArrayList<CraftSupply>();
 	static ArrayList<String> justItemNames = new ArrayList<String>();
@@ -21,7 +28,6 @@ public class Inventory {
 	private void refreshInventory() {
 		items.clear();
 		justItemNames.clear();
-		
 		genItems();
 		sortInventory();
 		genJustItemNames();
@@ -61,8 +67,7 @@ public class Inventory {
             	        }
             		}
             		
-            		CraftSupply cs = new CraftSupply(name, type, color, quantity, size);
-            		items.add(cs);
+            		items.add(new CraftSupply (name, type, color, quantity, size));
             	}
             }
         } catch (IOException e) {
@@ -119,12 +124,27 @@ public class Inventory {
 		return visible;
 	}
 	
+	//Returns visible CraftSupply OBJECTS in the order the user sees them on the screen 
+	// Used by edit and delete flows so they can work with the objects
+	
+	public ArrayList<CraftSupply> getVisibleItems(ArrayList<String> activeFilters) {
+		ArrayList<CraftSupply> visible = new ArrayList<CraftSupply>();
+		
+		for (CraftSupply item: items) {
+			if (activeFilters.isEmpty() || activeFilters.contains(item.getType())) {
+				visible.add(item);
+			}
+		}
+		
+		return visible;
+	}
+	
 	public int size() {
 		return items.size();
 	}
 
 	
-	//add a new item to the inventory and re-sort
+	//add a new item to the inventory and re-sort and updates justNames (doesn't write to file)
 	public boolean addItem(CraftSupply cs) {
 		boolean added = items.add(cs);
 		sortInventory();
@@ -135,8 +155,41 @@ public class Inventory {
 	//remove an item from the inventory and re-sort
 	public boolean removeItem(CraftSupply cs) {
 		boolean removed = items.remove(cs);
-		sortInventory();
-		genJustItemNames();
+		if (removed) {
+			sortInventory();
+			genJustItemNames();
+		}
 		return removed;
 	}
+	
+	//Replaces oldItem with newItem, re-sorts, and re-writes inventory.csv
+	//returns false if oldItem isn't found
+	public boolean updateItem(CraftSupply oldItem, CraftSupply newItem) {
+		int idx = items.indexOf(oldItem);
+		if (idx == -1) return false;
+		
+		items.set(idx, newItem);
+		sortInventory();
+		genJustItemNames();
+		rewriteInventoryFile();
+		return true;
+	}
+	
+	public void deleteItems( ArrayList<CraftSupply> toDelete) {
+		items.removeAll(toDelete);
+		sortInventory();
+		genJustItemNames();
+		rewriteInventoryFile();
+	}
+	
+	public void rewriteInventoryFile() {
+		try(FileWriter fw = new FileWriter("inventory.csv", false)) {
+			for (CraftSupply item : items) {
+				fw.write(item.toInventoryFileLine() + System.lineSeparator());
+			}
+		} catch (IOException e) {
+			System.err.println("Error rewriting inventory file: " + e.getMessage());
+		}
+	}
+
 }
