@@ -61,16 +61,12 @@ public class Craft {
 	
 	private String materialsString() {
 		String s = "";
-		for (int i = 0; i < materials.length; i++) {
-			String obj = materials[i];
-			s = s + obj; 
-			if(i < materials.length-1) {
-				s += ", ";
-			}
+		for (String obj : materials) {
+			s = s + obj + " ";
 		}
-		
 		return s.trim();
 	}
+
 	
 	public String[] getMaterials() {
 		return materials;
@@ -103,22 +99,14 @@ public class Craft {
 				+ "   Type: " + this.type + "\n"
 				+ "   Materials:\n   ";
 		
-		for (int i = 0; i < this.materials.length; i++) {
-			String item = this.materials[i];
+		for (String item : this.materials) {
 			String cleaned = item.trim();
 			if (availableSet.contains(cleaned.toLowerCase())) {
-				s += cleaned;
-				if(i < materials.length-1) {
-					s += ", ";
-				}
+				s += cleaned + " ";
 			} else {
 				s += "*" + cleaned + "*";
-				if(i < materials.length-1) {
-					s += ", ";
 				}
 			}
-
-		}
 		
 
 		s +=  "\n   Skill Level: " + this.level + "\n"
@@ -161,3 +149,4 @@ public class Craft {
 		return false;
 	}
 }
+	
