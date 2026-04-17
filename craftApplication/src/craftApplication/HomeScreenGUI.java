@@ -9,9 +9,6 @@ import java.io.IOException;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 /*
 * - Our current app is console-based and uses Scanner + actionSelect().
 * - A real GUI uses windows, panels, labels, buttons, and click events.
@@ -27,38 +24,38 @@ public class HomeScreenGUI extends JFrame {
   * - navigation buttons
   * - footer
   */
+	
+	//CHANGE DEFAULT FONTS
+	 Font comba = new Font("SansSerif", Font.BOLD, 40);
+	 Font forager = new Font("SansSerif", Font.BOLD, 24);
+	 Font basicGothicProBold = new Font("SansSerif", Font.BOLD, 12);
+	 Font basicGothicProBoldItalic = new Font("SansSerif", Font.ITALIC, 12);
+	 Font basicGothicProBook = new Font("SansSerif", Font.PLAIN, 12);
+	 Font basicGothicProBookItalic = new Font("SansSerif", Font.ITALIC, 12);
+	 Font basicGothicProDemibold = new Font("SansSerif", Font.BOLD, 12);
+	 Font basicGothicProDemiboldItalic = new Font("SansSerif", Font.ITALIC, 12);
  public HomeScreenGUI() {
 	 //Adding custom fonts
-	 //Referencing https://www.ryisnow.online/2021/04/java-for-beginner-how-to-use-custom-font.html
-	 //CHANGE DEFAULT FONTS
-	 Font comba = new Font("SansSerif", Font.BOLD, 40);
-	 Font forager = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProBold = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProBoldItalic = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProBook = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProBookItalic = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProDemibold = new Font("SansSerif", Font.BOLD, 40);
-	 Font basicGothicProDemiboldItalic = new Font("SansSerif", Font.BOLD, 40);
-	 
+	 //Referencing https://www.ryisnow.online/2021/04/java-for-beginner-how-to-use-custom-font.html	 
 	 try{
 		 
 		 GraphicsEnvironment graphEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		 
 		 //loading Comba Ultra Wide from the fonts folder
-		 comba = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Comba-Ultra-Wide.otf")).deriveFont(15f);
+		 comba = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Comba-Ultra-Wide.otf")).deriveFont(12f);
 		 graphEnv.registerFont(comba);
 		 
 		 //loading Forager Bold from the fonts folder
-		 forager = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Forager-Bold.otf")).deriveFont(15f);
+		 forager = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Forager-Bold.otf")).deriveFont(12f);
 		 graphEnv.registerFont(forager);
 		 
 		 //loading all Basic Gothic Pro fonts from the fonts folder
-		 basicGothicProBold = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Bold.otf")).deriveFont(15f);
-		 basicGothicProBoldItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Bold-Italic.otf")).deriveFont(15f);
-		 basicGothicProBook = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Book.otf")).deriveFont(15f);
-		 basicGothicProBookItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Book-Italic.otf")).deriveFont(15f);
-		 basicGothicProDemibold = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Demibold.otf")).deriveFont(15f);
-		 basicGothicProDemiboldItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Demibold-Italic.otf")).deriveFont(15f);
+		 basicGothicProBold = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Bold.otf")).deriveFont(12f);
+		 basicGothicProBoldItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Bold-Italic.otf")).deriveFont(12f);
+		 basicGothicProBook = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Book.otf")).deriveFont(12f);
+		 basicGothicProBookItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Book-Italic.otf")).deriveFont(12f);
+		 basicGothicProDemibold = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Demibold.otf")).deriveFont(12f);
+		 basicGothicProDemiboldItalic = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/Basic-Gothic-Pro-Demibold-Italic.otf")).deriveFont(12f);
 		 graphEnv.registerFont(basicGothicProBold);
 		 graphEnv.registerFont(basicGothicProBoldItalic);
 		 graphEnv.registerFont(basicGothicProBook);
@@ -81,7 +78,7 @@ public class HomeScreenGUI extends JFrame {
      setLocationRelativeTo(null);
      // Prevents the user from resizing the window for now
      // This keeps the layout stable while we prototype the design
-     setResizable(false);
+     setResizable(true);
      /*
       * the main panel is the root container of everything inside the window
       *
@@ -94,6 +91,11 @@ public class HomeScreenGUI extends JFrame {
       * - footer in SOUTH
       */
      JPanel mainPanel = new JPanel(new BorderLayout());
+     JPanel wrapper = new JPanel(new BorderLayout());
+     wrapper.setBackground(new Color(255, 248, 206));
+     wrapper.setPreferredSize(new Dimension(900, 800));
+     JScrollPane wrapperScroll = new JScrollPane(wrapper);
+     wrapperScroll.setBackground(new Color(255, 248, 206));
      // light background color for the whole screen
      mainPanel.setBackground(new Color(255, 248, 206));
      /*
@@ -121,25 +123,25 @@ public class HomeScreenGUI extends JFrame {
      });
      homeBtn.setForeground(new Color(19, 111, 99));
      homeBtn.setHorizontalAlignment(SwingConstants.LEADING);
-     homeBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 12));
+     homeBtn.setFont(basicGothicProBold.deriveFont(12f));
      homeBtn.setBackground(new Color(255, 248, 206));
      homeBtn.setHorizontalAlignment(SwingConstants.LEFT);
      navPanel.add(homeBtn);
      
      JButton savedCraftsBtn = new JButton("Saved Crafts");
-     savedCraftsBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+     savedCraftsBtn.setFont(basicGothicProDemibold.deriveFont(12f));
      savedCraftsBtn.setBackground(new Color(255, 248, 206));
      savedCraftsBtn.setHorizontalAlignment(SwingConstants.LEFT);
      navPanel.add(savedCraftsBtn);
      
      JButton inventoryBtn = new JButton("Inventory");
-     inventoryBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+     inventoryBtn.setFont(basicGothicProDemibold.deriveFont(12f));
      inventoryBtn.setBackground(new Color(255, 248, 206));
      inventoryBtn.setHorizontalAlignment(SwingConstants.LEADING);
      navPanel.add(inventoryBtn);
      
      JButton catalogBtn = new JButton("Catalog");
-     catalogBtn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+     catalogBtn.setFont(basicGothicProDemibold.deriveFont(12f));
      catalogBtn.setBackground(new Color(255, 248, 206));
      catalogBtn.setHorizontalAlignment(SwingConstants.LEADING);
      navPanel.add(catalogBtn);
@@ -158,12 +160,12 @@ public class HomeScreenGUI extends JFrame {
      headerPanel.setBackground(new Color(255, 248, 206));
      // Opaque false means the panel will not paint a solid background
      headerPanel.setOpaque(false);
-     headerPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
+     headerPanel.setBorder(new EmptyBorder(60, 0, 60, 0));
      GridBagLayout gbl_headerPanel = new GridBagLayout();
-     gbl_headerPanel.columnWidths = new int[]{1010, 0};
-     gbl_headerPanel.rowHeights = new int[]{46, 0};
-     gbl_headerPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-     gbl_headerPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+     gbl_headerPanel.columnWidths = new int[] {10};
+     gbl_headerPanel.rowHeights = new int[]{46, 0, 0};
+     gbl_headerPanel.columnWeights = new double[]{0.0};
+     gbl_headerPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE, 0.0};
      headerPanel.setLayout(gbl_headerPanel);
      /*
       * titleGroup stacks the title and subtitle vertically.
@@ -183,14 +185,14 @@ public class HomeScreenGUI extends JFrame {
      heroPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
      // Large welcome heading
      JLabel heroTitle = new JLabel("Welcome to Craft Overflow");
-     heroTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
+     heroTitle.setFont(basicGothicProDemibold.deriveFont(30f));
      heroTitle.setForeground(Color.WHITE);
      //HTML can be used inside a JLabel when we want multi-line text.
      JLabel heroText = new JLabel(
              "<html>Manage your inventory, explore the catalog, save crafts, " +
              "and get personalized recommendations based on the supplies you already have.</html>"
      );
-     heroText.setFont(new Font("SansSerif", Font.PLAIN, 16));
+     heroText.setFont(basicGothicProBook.deriveFont(18f));
      heroText.setForeground(Color.WHITE);
      JPanel heroTextPanel = new JPanel();
      heroTextPanel.setLayout(new BoxLayout(heroTextPanel, BoxLayout.Y_AXIS));
@@ -229,21 +231,39 @@ public class HomeScreenGUI extends JFrame {
              "Recommendations",
              "Get crafts based on your inventory"
      );
+     inventoryButton.setFont(basicGothicProBook);
+     catalogButton.setFont(basicGothicProBook);
+     savedCraftsButton.setFont(basicGothicProBook);
+     recommendationsButton.setFont(basicGothicProBook);
+     
      /*
       * These button actions are placeholders for now.
       *
       * JOptionPane.showMessageDialog(...) opens a small popup window.
       * im using popups temporarily so we can test that clicks work
       */
+     homeBtn.addActionListener(e ->
+		 JOptionPane.showMessageDialog(this, "Open Home Screen here.")
+     );
      inventoryButton.addActionListener(e ->
              JOptionPane.showMessageDialog(this, "Open Inventory screen here.")
      );
+     inventoryBtn.addActionListener(e ->
+	     	 JOptionPane.showMessageDialog(this, "Open Inventory screen here.")
+	 );
      catalogButton.addActionListener(e ->
              JOptionPane.showMessageDialog(this, "Open Catalog screen here.")
      );
+     catalogBtn.addActionListener(e ->
+	  		 JOptionPane.showMessageDialog(this, "Open Catalog screen here.")
+	 );
      savedCraftsButton.addActionListener(e ->
              JOptionPane.showMessageDialog(this, "Open Saved Crafts screen here.")
      );
+     savedCraftsBtn.addActionListener(e ->
+     		 JOptionPane.showMessageDialog(this, "Open Saved Crafts screen here.")
+     );
+
      recommendationsButton.addActionListener(e ->
              JOptionPane.showMessageDialog(this, "Open Recommendations screen here.")
      );
@@ -261,11 +281,12 @@ public class HomeScreenGUI extends JFrame {
       */
      JPanel footerPanel = new JPanel(new BorderLayout());
      footerPanel.setOpaque(false);
-     footerPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+     footerPanel.setBorder(new EmptyBorder(20, 40, 20,40));
      JLabel footerLabel = new JLabel("Craft Overflow - Java GUI Prototype");
-     footerLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+     footerLabel.setFont(basicGothicProBook);
      footerLabel.setForeground(new Color(130, 130, 130));
      JButton exitButton = new JButton("Exit");
+     exitButton.setFont(basicGothicProBold);
      // Apply shared small-button style
      styleSmallButton(exitButton);
      // Clicking Exit closes the application
@@ -279,43 +300,42 @@ public class HomeScreenGUI extends JFrame {
       * - the button grid stays below it
       */
      JPanel centerPanel = new JPanel(new BorderLayout());
+     centerPanel.setBorder(new EmptyBorder(0, 40, 20, 40));
      centerPanel.setOpaque(false);
      centerPanel.add(headerPanel, BorderLayout.NORTH);
      // Main app title
      JLabel titleLabel = new JLabel("Craft Overflow");
      titleLabel.setVerticalAlignment(SwingConstants.TOP);
      titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-     //titleLabel.setFont(new Font("SansSerif", Font.BOLD, 40));
      titleLabel.setFont(comba.deriveFont(40f));
      titleLabel.setForeground(new Color(19, 111, 99));
      // slogan under the title
-//     JPanel subtitlePanel = new JPanel(new GridBagLayout());
-//     subtitlePanel.setOpaque(false);
      JLabel subtitleLabel = new JLabel("Personalized crafting starts here.");
      subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-     subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+     subtitleLabel.setFont(basicGothicProBook.deriveFont(18f));
      subtitleLabel.setForeground(new Color(0, 15, 8));
-//     subtitlePanel.add(subtitleLabel, new GridBagConstraints());
+
+     //Setting Grid Bag Constraints (c1 = row 1, c2 = row 2)
+     GridBagConstraints c1 = new GridBagConstraints();
+     c1.insets = new Insets(0, 0, 5, 0);
+     c1.gridx = 0;
+     c1.gridy = 0;
+     GridBagConstraints c2 = new GridBagConstraints();
+     c2.insets = new Insets(0, 0, 5, 0);
+     c2.gridx = 0;
+     c2.gridy = 1;
      
-//     JPanel titleGroup = new JPanel();
-//     titleGroup.setLayout(new BoxLayout(titleGroup, BoxLayout.Y_AXIS));
-//     titleGroup.setOpaque(false);
-//     titleGroup.add(titleLabel);
-//     // Small vertical 
-//     titleGroup.add(Box.createVerticalStrut(8));
-     // subtitle
-//     titleGroup.add(subtitlePanel);
-     // Referenced: https://forums.oracle.com/ords/apexds/post/centering-gui-components-1553
-//     headerPanel.add(titleGroup, new GridBagConstraints());
-     headerPanel.add(titleLabel, new GridBagConstraints());
-     headerPanel.add(subtitleLabel, GridBagConstraints.RELATIVE);
+     headerPanel.add(titleLabel, c1);
+     headerPanel.add(subtitleLabel, c2);     
+     
      
      centerPanel.add(heroPanel, BorderLayout.CENTER);
      centerPanel.add(cardPanel, BorderLayout.SOUTH);
      container.add(centerPanel, BorderLayout.NORTH);
      container.add(footerPanel, BorderLayout.SOUTH);
-     mainPanel.add(navPanel, BorderLayout.NORTH);
-     mainPanel.add(container, BorderLayout.CENTER);
+     wrapper.add(navPanel, BorderLayout.NORTH);
+     wrapper.add(container, BorderLayout.CENTER);
+     mainPanel.add(wrapperScroll);
      // Make mainPanel the content area of the JFrame window
      setContentPane(mainPanel);
  }
@@ -332,7 +352,7 @@ public class HomeScreenGUI extends JFrame {
       */
      JButton button = new JButton(
              "<html><div style='text-align: left; background-color: #136F63'>" +
-             "<span style='font-size: 18px; font-weight: bold; color: white;'>" + title + "</span><br>" +
+             "<span style='font-size: 18px; font-weight: bold; color: white'>" + title + "</span><br>" +
              "<span style='font-size: 12px; color: white;'>" + description + "</span>" +
              "</div></html>"
      );
@@ -362,9 +382,9 @@ public class HomeScreenGUI extends JFrame {
      button.setFocusPainted(false);
      button.setBackground(new Color(40, 40, 40));
      button.setForeground(Color.WHITE);
-     button.setFont(new Font("SansSerif", Font.BOLD, 14));
+     button.setFont(basicGothicProBold);
      button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-     button.setBorder(new EmptyBorder(10, 18, 10, 18));
+     button.setBorder(new EmptyBorder(10, 18, 7, 18));
  }
  /*
   * main method
