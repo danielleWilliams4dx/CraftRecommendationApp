@@ -99,14 +99,18 @@ public class Craft {
 				+ "   Type: " + this.type + "\n"
 				+ "   Materials:\n   ";
 		
-		for (String item : this.materials) {
-			String cleaned = item.trim();
+		//list materials with commas in-between
+		for(int i = 0; i < this.materials.length; i++) {
+			String cleaned = this.materials[i].trim();
 			if (availableSet.contains(cleaned.toLowerCase())) {
-				s += cleaned + " ";
+				s += cleaned;
 			} else {
 				s += "*" + cleaned + "*";
-				}
 			}
+			if(i < this.materials.length-1) {
+				s += ", ";
+			}
+		}
 		
 
 		s +=  "\n   Skill Level: " + this.level + "\n"

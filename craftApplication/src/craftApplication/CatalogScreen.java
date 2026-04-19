@@ -249,7 +249,7 @@ public class CatalogScreen implements Screen {
 				if (selected.needsColor() || selected.needsQuantity() || selected.needsSize()) {
 					System.out.println("\n[" + selected.getName() + "] requires some additional information:" );
 					System.out.println("(Type 'X' to skip this item and stop adding.\n" 
-					+ " Type 'X' again to confirm skipping.)");
+					+ " Type 'X' again to confirm skipping.)\n");
 				}
 				
 				if (selected.needsColor()) {
@@ -297,7 +297,7 @@ public class CatalogScreen implements Screen {
 				);
 				
 				//Duplicate Check:
-				CraftSupply existing = findExistingItem(selected.getName());
+				CraftSupply existing = findExistingItem(itemToAdd);
 				
 				if (existing != null ) {
 					handleDuplicateAdd(existing, itemToAdd, quantity, selected.needsQuantity());
@@ -337,13 +337,13 @@ public class CatalogScreen implements Screen {
 						+ " added to your invenroty.");
 			}
 			
-			System.out.println(skippedList + "could not be added due to insufficient information.");
+			System.out.println(skippedList + " could not be added due to insufficient information.");
 			
 		} else if (addedCount == 1) {
 			System.out.println("[" + addedItems.get(0) + "] was successfully added to your inventory");
 			
 		} else if (addedCount > 1) {
-			System.out.println("[" + addedCount + "] craft supplies were added to your inventory");
+			System.out.println(addedCount + " craft supplies were added to your inventory");
 			
 		} else {
 			System.out.println("No supplies were added to your inventory");
@@ -353,17 +353,20 @@ public class CatalogScreen implements Screen {
 	//Duplicate handling 
 	//Finds the first inventory item whose name matches
 	
-	private CraftSupply findExistingItem(String name) {
+	private CraftSupply findExistingItem(CraftSupply cs) {
 		for (CraftSupply item : Inventory.items) {
-			if (item.getName().equalsIgnoreCase(name)) {
-				return item;
-
+			//If the names match, compare the other attributes
+			//If they match, return the item
+			if (item.getName().equalsIgnoreCase(cs.getName())) {
+				if(item.getColor().equalsIgnoreCase(cs.getColor()) && item.getSize().equalsIgnoreCase(cs.getSize())){
+					return item;
+				}
 			}
 		}
 		return null;
 	}
 	
-	//Increments qunatity of an existing inv. item 
+	//Increments quantity of an existing inv. item 
 	//If qnt is a required field - we add the newly added entered qnt value to the existing one
 	//otherwise we add 1 to whatever numeric quntity is stored 
 	private void handleDuplicateAdd(CraftSupply existing, CraftSupply incoming, 
@@ -422,17 +425,17 @@ public class CatalogScreen implements Screen {
 		
 		while(true) {
 			if (currentValue.isEmpty()) {
-				System.out.println( fieldName + ": ");
+				System.out.print( fieldName + ": ");
 			} else {
-				System.out.println(fieldName + " [" + currentValue + "]: ");
+				System.out.print(fieldName + " [" + currentValue + "]: ");
 			}
 			
 			String input = kb.nextLine().trim();
 			
 			if(input.equalsIgnoreCase("X")) {
 				if (!warnedClose) {
-					System.out.println("** IF YOU CLOSE THE MENU, ANY CHANGES WILLNOT BE SAVED");
-					System.out.println("Type 'X' again to confirm, or enter a value to continue");
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or enter a value to continue.\n");
 					warnedClose = true;
 				} else {
 					return null;

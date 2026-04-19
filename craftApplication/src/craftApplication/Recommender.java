@@ -86,30 +86,41 @@ public class Recommender {
 		
 		if (hasClose) {
 			recs.addAll(closeRecs);
+			boolean displayClose = false;
 			
 			//numbering continues from where perfect matches left off
 			int offset = perfectRecs.size();
 			
 			if (hasPerfect) {
 				if (closeRecs.size() == 1) {
-					System.out.println("There is also 1 close match (1-2 missing supplies):");
+					System.out.println("There is also 1 close match (1-2 missing supplies).");
+					System.out.println("Type 'D' to display it or any other key to continue.\n\nYour Answer: ");
 				} else {
-					System.out.println("There is also " + closeRecs.size() + " close matches (1-2 missing supplies):");
+					System.out.println("There is also " + closeRecs.size() + " close matches (1-2 missing supplies).");
+					System.out.println("Type 'D' to display them or any other key to continue.\n\nYour Answer: ");
 				}
+				Scanner s = new Scanner(System.in);
+				if(s.nextLine().trim().toUpperCase().equals("D")) {
+					displayClose = true;
+					System.out.println();
+				}
+				s.close();
 			} else {
 				//Only close matches - no perfect matches exist
-				System.out.println("We could not find any crafts that perfectly match your critiria.");
+				//System.out.println("We could not find any crafts that perfectly match your critiria.");
 				if(closeRecs.size() == 1) {
-					System.out.println("Here is 1 close match to your critiria.");
+					System.out.println("Here is 1 close match to your criteria.");
 				} else {
 					System.out.println("Here are " + closeRecs.size() + " close matches to your critiria.");
 				}
 			}
-			
-			System.out.println("Additional supplies that you need are *starred*\n");
-			
-			for (int i = 0; i < closeRecs.size(); i++ ) {
-				System.out.println(closeRecs.get(i).toStringWithIndex(offset + i + 1, availableItemNames));
+			//display close recommendations if the user selected to do so or if there are no perfect matches
+			if(!hasPerfect || (hasPerfect && displayClose)) {
+				System.out.println("Additional supplies that you need are *starred*\n");
+				
+				for (int i = 0; i < closeRecs.size(); i++ ) {
+					System.out.println(closeRecs.get(i).toStringWithIndex(offset + i + 1, availableItemNames));
+				}
 			}
 		}
 	}

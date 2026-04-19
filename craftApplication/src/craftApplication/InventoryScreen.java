@@ -36,8 +36,8 @@ public class InventoryScreen implements Screen{
 	String invActions = "Inventory Actions:\n"
 			+ "- Type ‘F’ to filter your inventory\n"
 			+ "- Type ‘R’ to generate craft recommendations\n"
-			+ "- Type ‘E’ or 'E 1,2' to edit craft supplies\n"
-			+ "- Type ‘D’ or 'D 1,2' to delete craft supplies\n";;
+			+ "- Type ‘E’ to edit craft supplies\n"
+			+ "- Type ‘D’ to delete craft supplies\n";;
 	
 	
 	public InventoryScreen() {}
@@ -150,10 +150,16 @@ public class InventoryScreen implements Screen{
 				System.out.println("\n" + nonEditable.get(0).getName() + " does not have any editable attributes.");
 			} else {
 				StringBuilder msg = new StringBuilder("\n");
-				for(int i = 0; i < nonEditable.size(); i++) {
-					if (i > 0 && i == nonEditable.size() -1) msg.append(", and ");
-					else if (i >0) msg.append(", ");
-					msg.append(nonEditable.get(i).getName());
+				if(nonEditable.size() == 2) {
+					msg.append(nonEditable.get(0).getName());
+					msg.append(" and ");
+					msg.append(nonEditable.get(1).getName());
+				}else {
+					for (int i = 0; i < nonEditable.size(); i++) {
+						if (i > 0 && i == nonEditable.size() - 1) msg.append(", and ");
+						else if (i > 0) msg.append(", ");
+						msg.append(nonEditable.get(i).getName());
+					}
 				}
 				msg.append(" do not have any editable attributes.");
 				System.out.println(msg.toString());
@@ -207,7 +213,7 @@ public class InventoryScreen implements Screen{
 			if (page < selectedItems.size() - 1) {
 				boolean advanced = false;
 				boolean warnedClose = false;
-				System.out.println("\nType 'NEXT' to continue to the next item, or 'X' to cancel.");
+				System.out.println("\nType 'NEXT' to continue to the next item, or 'X' to cancel.\n\nYour Answer:");
 				
 				while (!advanced) {
 					String nav = kb.nextLine().trim().toUpperCase();
@@ -215,8 +221,8 @@ public class InventoryScreen implements Screen{
 						advanced = true;
 					} else if (nav.equals("X")) {
 						if (!warnedClose) {
-							System.out.println("** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
-							System.out.println("Type 'X' again to confirm, or 'NEXT' to continue.");
+							System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+							System.out.println("Type 'X' again to confirm, or 'NEXT' to continue.\n\nYour Answer:");
 							warnedClose = true;
 						} else {
 							System.out.println("\nEdit cancelled. No changes were saved.");
@@ -231,7 +237,7 @@ public class InventoryScreen implements Screen{
 		
 		//Final submit page
 		System.out.println("\n---Review & Submit ___");
-		System.out.println("Type 'SUBMIT' to save all changes, or 'X' to cancel.");
+		System.out.println("Type 'SUBMIT' to save all changes, or 'X' to cancel.\n\nYour Answer:");
 		boolean submitted = false;
 		boolean warnedClose = false;
 		
@@ -241,11 +247,11 @@ public class InventoryScreen implements Screen{
 				submitted = true;
 			} else if (ans.equals("X")) {
 				if (!warnedClose) {
-					System.out.println("** IF YOU CLOSE THE MANU, ANY CHANGES WILL NOT BE SAVED.");
-					System.out.println("Type 'X' again to confirm, or 'SUBMIT' to save");
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or 'SUBMIT' to save.\n\nYour Answer: ");
 					warnedClose = true;
 				} else {
-					System.out.println("\n Edit cancelled. No changes were saved.");
+					System.out.println("\nEdit cancelled. No changes were saved.");
 					return;
 				}
 			} else {
@@ -282,15 +288,21 @@ public class InventoryScreen implements Screen{
 		if (selectedItems == null) return;
 		
 		StringBuilder nameList = new StringBuilder();
-		for (int i = 0; i < selectedItems.size(); i++) {
-			if (i > 0 && i == selectedItems.size() - 1) nameList.append(", and ");
-			else if (i > 0) nameList.append(", ");
-			nameList.append(selectedItems.get(i).getName());
+		if(selectedItems.size() == 2) {
+			nameList.append(selectedItems.get(0).getName());
+			nameList.append(" and ");
+			nameList.append(selectedItems.get(1).getName());
+		}else {
+			for (int i = 0; i < selectedItems.size(); i++) {
+				if (i > 0 && i == selectedItems.size() - 1) nameList.append(", and ");
+				else if (i > 0) nameList.append(", ");
+				nameList.append(selectedItems.get(i).getName());
+			}
 		}
 		
 		System.out.println("\nAre you sure that you would like to delete your "
 				+ nameList + "? This action cannot be undone.");
-		System.out.println("Type 'DELETE' to confirm, or 'X' to cancel \n");
+		System.out.println("Type 'DELETE' to confirm, or 'X' to cancel \n\nYour Answer: ");
 		
 		Scanner kb = new Scanner(System.in);
 		boolean done = false;
@@ -307,7 +319,7 @@ public class InventoryScreen implements Screen{
 				System.out.println("\nDeletion cancelled.");
 				done = true;
 			} else {
-				System.out.println("Invalid input. Type 'DELETE' to confirm or 'X' to cancel.");
+				System.out.println("Invalid input. Type 'DELETE' to confirm or 'X' to cancel.\n\nYour Answer:");
 			}
 		}
 	}
@@ -576,7 +588,7 @@ public class InventoryScreen implements Screen{
 		
 		System.out.println("\nEnter the item number(s) you want to " + action +
 				" (comma-seperated), or 'X' to cancel.");
-		System.out.println("Your answer: ");
+		System.out.println("\nYour Answer: ");
 		
 		Scanner kb = new Scanner(System.in);
 		String answer = kb.nextLine().trim().toUpperCase();
@@ -650,14 +662,14 @@ public class InventoryScreen implements Screen{
 		boolean warnedClose = false;
 		
 		while (true) {
-			System.out.println(fieldName + " [" 
-					+ (currentValue.isEmpty() ? "none" : currentValue) + " ]: ");
+			System.out.print(fieldName + " [" 
+					+ (currentValue.isEmpty() ? "none" : currentValue) + "]: ");
 			String input = kb.nextLine().trim();
 			
 			if (input.equalsIgnoreCase("X") ) {
 				if (!warnedClose) {
-					System.out.println("** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
-					System.out.println("Type 'X' again to confirm, or enter a value to continue.");
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or enter a value to continue.\n");
 					warnedClose = true;
 				} else {
 					System.out.println("\nEdit cancelled. No changes were saved.");
