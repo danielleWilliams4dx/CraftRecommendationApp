@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.io.File;
 import java.io.IOException;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 /*
@@ -109,7 +108,7 @@ public class HomeScreenGUI extends JFrame {
      navPanel.setOpaque(true);
      navPanel.setBorder(new EmptyBorder(20, 20, 0, 20));
      
-     JLabel titleInNav = DefaultComponentFactory.getInstance().createLabel("<html>Craft Overflow</html>");
+     JLabel titleInNav = new JLabel("<html>Craft Overflow</html>");
      titleInNav.setFont(comba.deriveFont(20f));
      titleInNav.setOpaque(false);
      titleInNav.setBorder(new EmptyBorder(0, 0, 20, 0));
