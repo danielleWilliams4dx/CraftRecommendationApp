@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.io.File;
 import java.io.IOException;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 /*
@@ -123,12 +122,12 @@ public class GUIScreens extends JFrame {
      NavPanel.setOpaque(true);
      NavPanel.setBorder(new EmptyBorder(20, 20, 0, 20));
      
-     JLabel TitleInNav = DefaultComponentFactory.getInstance().createLabel("<html>Craft Overflow</html>");
-     TitleInNav.setFont(comba.deriveFont(20f));
-     TitleInNav.setOpaque(false);
-     TitleInNav.setBorder(new EmptyBorder(0, 0, 20, 0));
-     TitleInNav.setForeground(new Color(255, 255, 255));
-     NavPanel.add(TitleInNav);
+     JLabel titleInNav = new JLabel("<html>Craft Overflow</html>");
+     titleInNav.setFont(comba.deriveFont(20f));
+     titleInNav.setOpaque(false);
+     titleInNav.setBorder(new EmptyBorder(0, 0, 20, 0));
+     titleInNav.setForeground(new Color(255, 255, 255));
+     NavPanel.add(titleInNav);
      
      JButton HomeBtn = new JButton("Home");
      HomeBtn.addActionListener(new ActionListener() {
@@ -390,12 +389,12 @@ public JPanel buildInventoryScreenGUI() {
     NavPanel2.setOpaque(true);
     NavPanel2.setBorder(new EmptyBorder(20, 20, 0, 20));
     
-    JLabel TitleInNav = DefaultComponentFactory.getInstance().createLabel("<html>Craft Overflow</html>");
-    TitleInNav.setFont(comba.deriveFont(20f));
-    TitleInNav.setOpaque(false);
-    TitleInNav.setBorder(new EmptyBorder(0, 0, 20, 0));
-    TitleInNav.setForeground(new Color(255, 255, 255));
-    NavPanel2.add(TitleInNav);
+    JLabel titleInNav = new JLabel("<html>Craft Overflow</html>");
+    titleInNav.setFont(comba.deriveFont(20f));
+    titleInNav.setOpaque(false);
+    titleInNav.setBorder(new EmptyBorder(0, 0, 20, 0));
+    titleInNav.setForeground(new Color(255, 255, 255));
+    NavPanel2.add(titleInNav);
     
     JButton HomeBtn = new JButton("Home");
     HomeBtn.addActionListener(new ActionListener() {

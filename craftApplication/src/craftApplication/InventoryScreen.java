@@ -14,6 +14,17 @@ import java.util.HashSet;
 // -  'D' clears filters 
 // - 'I'returns without changes 
 
+// NEW EDIT : "E 1,2" or bare "E" - edit one or more craft supplies
+// non-editable items are blocked with a clear message 
+// fields are pre-filled with current values; 
+// typing 'x' shows close warning; second 'x' cancels without saving 
+// 'SUBMIT' on the final page applies all changes 
+
+//NEW DELETE: "D 1,2" or "D" - delete one or more craft supplies
+// Confirmation message lists the items and warns the action can't be undone 
+// DELETE confirms; X cancels 
+
+
 public class InventoryScreen implements Screen{
 	
 	Inventory inv = new Inventory();
@@ -24,7 +35,10 @@ public class InventoryScreen implements Screen{
 	//actions specific to inventory to be displayed
 	String invActions = "Inventory Actions:\n"
 			+ "- Type ‘F’ to filter your inventory\n"
-			+ "- Type ‘R’ to generate craft recommendations\n";
+			+ "- Type ‘R’ to generate craft recommendations\n"
+			+ "- Type ‘E’ to edit craft supplies\n"
+			+ "- Type ‘D’ to delete craft supplies\n";;
+	
 	
 	public InventoryScreen() {}
 	
@@ -72,8 +86,6 @@ public class InventoryScreen implements Screen{
 			this.disp();
 			return screens[1];
 		}
-		
-		
 		else if (input.equals("R")) {
 			runRecommendationFlow();
 			//after recommendation flow, always return to inv display
@@ -81,10 +93,235 @@ public class InventoryScreen implements Screen{
 			return screens[1];
 		}
 		
+		// EDIT: "E", "E 1,2", or "E1,2"
+		//"E" alone prompts for numbers interactively
+		//"E 1,2" or "E1,2" passes numbers directly
+		if (input.equals("E") || input.startsWith("E ") || (input.length() > 1 && input.charAt(0) == 'E')) {
+			String rest = input.equals("E") ? "" : input.substring(1).trim();
+			if (rest.isEmpty()) {
+				rest = promptForItemNumbers("edit");
+			}
+			if (rest != null && !rest.isEmpty()) {
+				runEditFlow(rest);
+			}
+			this.disp();
+			return screens[1];
+		}
+		
+		//DELETE: "D", "D 1,2" or "D1,2" 
+		//The filter menu handles its own D input internally before returning here, 
+		// so a bare D at the main inv prompt always means delete
+		if (input.equals("D") || input.startsWith("D ") || (input.length() > 1 && input.charAt(0) == 'D')) {
+			String rest = input.equals("D") ? "" : input.substring(1).trim();
+			if (rest.isEmpty()) {
+				rest = promptForItemNumbers("delete");
+			}
+			if (rest != null && !rest.isEmpty()) {
+				runDeleteFlow(rest);
+			}
+			this.disp();
+			return screens[1];
+		}
+		
+		
 		//Invalid command handling 
 		System.out.println("\nInvalid input. Please try again.");
 		this.disp();
 		return screens[1];
+	}
+	
+	// EDIT FLOW
+	private void runEditFlow(String selectionInput) {
+		inv = new Inventory();
+		ArrayList<CraftSupply> visibleItems = inv.getVisibleItems(activeFilters);
+		
+		if (visibleItems.isEmpty()) {
+			System.out.println("\nYour inventory is empty.");
+			return;
+		}
+		
+		ArrayList<CraftSupply> selectedItems = parseItemSelection(selectionInput, visibleItems);
+		if (selectedItems == null) return;
+		
+		//block if any selected item has no editable attributes 
+		ArrayList<CraftSupply> nonEditable = getNonEditableItems(selectedItems);
+		if (!nonEditable.isEmpty()) {
+			if (nonEditable.size() == 1) {
+				System.out.println("\n" + nonEditable.get(0).getName() + " does not have any editable attributes.");
+			} else {
+				StringBuilder msg = new StringBuilder("\n");
+				if(nonEditable.size() == 2) {
+					msg.append(nonEditable.get(0).getName());
+					msg.append(" and ");
+					msg.append(nonEditable.get(1).getName());
+				}else {
+					for (int i = 0; i < nonEditable.size(); i++) {
+						if (i > 0 && i == nonEditable.size() - 1) msg.append(", and ");
+						else if (i > 0) msg.append(", ");
+						msg.append(nonEditable.get(i).getName());
+					}
+				}
+				msg.append(" do not have any editable attributes.");
+				System.out.println(msg.toString());
+			}
+			System.out.println("Please deselect the non-editable items and try again");
+			return;
+		}
+		
+		Scanner kb = new Scanner(System.in);
+		ArrayList<CraftSupply> editedItems = new ArrayList<CraftSupply>();
+		
+		for (int page = 0; page < selectedItems.size(); page++ ) {
+			CraftSupply original = selectedItems.get(page);
+			
+			System.out.println("\n--- Editing: " + original.getName() 
+			    + " (" + (page + 1) + " of " + selectedItems.size() + ") ---");
+			System.out.println("(Press Enter to keep the current value. Type 'X' to cancel.)\n");
+			
+			CraftSupply catalogEntry = loadCatalogEntry(original.getName());
+			boolean needsColor = catalogEntry != null && catalogEntry.needsColor();
+			boolean needsQuantity = catalogEntry != null && catalogEntry.needsQuantity();
+			boolean needsSize = catalogEntry != null && catalogEntry.needsSize();
+			
+			String newColor = original.getColor();
+			String newQuantity = original.getQuantity();
+			String newSize = original.getSize();
+			
+			if (needsColor) {
+				String result = promptEditField(kb, "Color", original.getColor());
+				if (result == null) return; 
+				if (!result.isEmpty()) newColor = result;
+			}
+			
+			if (needsQuantity) {
+				String result = promptEditField(kb, "Quantity", original.getQuantity());
+				if (result == null) return; 
+				if (!result.isEmpty()) newQuantity = result;
+			}
+			
+			if (needsSize) {
+				String result = promptEditField(kb, "Size", original.getSize());
+				if (result == null) return; 
+				if (!result.isEmpty()) newSize = result;
+			}
+			
+			editedItems.add(new CraftSupply(
+					original.getName(), original.getType(),
+					newColor, newQuantity, newSize));
+			
+			//Between pages: ask user to continue or cancel
+			if (page < selectedItems.size() - 1) {
+				boolean advanced = false;
+				boolean warnedClose = false;
+				System.out.println("\nType 'NEXT' to continue to the next item, or 'X' to cancel.\n\nYour Answer:");
+				
+				while (!advanced) {
+					String nav = kb.nextLine().trim().toUpperCase();
+					if (nav.equals("NEXT")) {
+						advanced = true;
+					} else if (nav.equals("X")) {
+						if (!warnedClose) {
+							System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+							System.out.println("Type 'X' again to confirm, or 'NEXT' to continue.\n\nYour Answer:");
+							warnedClose = true;
+						} else {
+							System.out.println("\nEdit cancelled. No changes were saved.");
+							return;
+						}
+					} else {
+						System.out.println("Invalid input. Type 'NEXT' to continue or 'X' to cancel.");
+					}
+;				}
+			}
+		}
+		
+		//Final submit page
+		System.out.println("\n---Review & Submit ___");
+		System.out.println("Type 'SUBMIT' to save all changes, or 'X' to cancel.\n\nYour Answer:");
+		boolean submitted = false;
+		boolean warnedClose = false;
+		
+		while (!submitted) {
+			String ans = kb.nextLine().trim().toUpperCase();
+			if (ans.equals("SUBMIT")) {
+				submitted = true;
+			} else if (ans.equals("X")) {
+				if (!warnedClose) {
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or 'SUBMIT' to save.\n\nYour Answer: ");
+					warnedClose = true;
+				} else {
+					System.out.println("\nEdit cancelled. No changes were saved.");
+					return;
+				}
+			} else {
+				System.out.println("Invalid input. Type 'SUBMIT' to save or 'X' to cancel.");
+			}
+		}
+		
+		//Apply all changes 
+		int updatedCount = 0;
+		for (int i = 0; i < selectedItems.size(); i++) {
+			if (inv.updateItem(selectedItems.get(i), editedItems.get(i))) {
+				updatedCount++;
+			}
+		}
+		
+		if (updatedCount ==1) {
+			System.out.println("\n1 craft supply was successfully updated.");
+		} else {
+			System.out.println("\n" + updatedCount  + " craft supplies were successfully updated.");
+		}
+	}
+	
+	//Delete Flow
+	private void runDeleteFlow(String selectionInput) {
+		inv = new Inventory();
+		ArrayList<CraftSupply> visibleItems = inv.getVisibleItems(activeFilters);
+		
+		if (visibleItems.isEmpty()) {
+			System.out.println("\nYour inventory is empty.");
+			return;
+		}
+		
+		ArrayList<CraftSupply> selectedItems = parseItemSelection(selectionInput, visibleItems);
+		if (selectedItems == null) return;
+		
+		StringBuilder nameList = new StringBuilder();
+		if(selectedItems.size() == 2) {
+			nameList.append(selectedItems.get(0).getName());
+			nameList.append(" and ");
+			nameList.append(selectedItems.get(1).getName());
+		}else {
+			for (int i = 0; i < selectedItems.size(); i++) {
+				if (i > 0 && i == selectedItems.size() - 1) nameList.append(", and ");
+				else if (i > 0) nameList.append(", ");
+				nameList.append(selectedItems.get(i).getName());
+			}
+		}
+		
+		System.out.println("\nAre you sure that you would like to delete your "
+				+ nameList + "? This action cannot be undone.");
+		System.out.println("Type 'DELETE' to confirm, or 'X' to cancel \n\nYour Answer: ");
+		
+		Scanner kb = new Scanner(System.in);
+		boolean done = false;
+		
+		while (!done) {
+			String ans = kb.nextLine().trim().toUpperCase();
+			if (ans.equals("DELETE")) {
+				inv.deleteItems(selectedItems);
+				int count = selectedItems.size();
+				System.out.println(count == 1 ? "\n1 craft supply was deleted." 
+						: "\n" + count + " craft supplies were deleted.");
+				done = true;
+			} else if (ans.equals("X")) {
+				System.out.println("\nDeletion cancelled.");
+				done = true;
+			} else {
+				System.out.println("Invalid input. Type 'DELETE' to confirm or 'X' to cancel.\n\nYour Answer:");
+			}
+		}
 	}
 		
 	//Inventory filter menu 
@@ -338,7 +575,112 @@ public class InventoryScreen implements Screen{
 			System.out.println("\nNo crafts were saved.");
 		}
 	}
+	
+	//HELPERS
+	private String promptForItemNumbers(String action) {
+		inv = new Inventory();
+		ArrayList<CraftSupply> visibleItems = inv.getVisibleItems(activeFilters);
 		
+		if (visibleItems.isEmpty()) {
+			System.out.println("\nYour inventory is empty.");
+			return null;
+		}
+		
+		System.out.println("\nEnter the item number(s) you want to " + action +
+				" (comma-seperated), or 'X' to cancel.");
+		System.out.println("\nYour Answer: ");
+		
+		Scanner kb = new Scanner(System.in);
+		String answer = kb.nextLine().trim().toUpperCase();
+		
+		if (answer.equals("X") || answer.isEmpty()) return null;
+		return answer;
+	}
+	
+	//Parses a comma-seperated string of 1-based indices into CraftSupply objects 
+	//Returns null and print an error if any token is out of range or non-numberic 
+	private ArrayList<CraftSupply> parseItemSelection(String input, ArrayList<CraftSupply> visibleItems) {
+		
+		ArrayList<CraftSupply> selected = new ArrayList<CraftSupply>();
+		HashSet<Integer> seen = new HashSet<Integer>();
+		
+		for (String token : input.split(",")) {
+			String t = token.trim();
+			if(t.isEmpty()) continue;
+			
+			try {
+				int idx = Integer.parseInt(t);
+				if (idx < 1 || idx > visibleItems.size()) {
+					System.out.println("\nInvalid item number " + t + 
+							". Please use numbers between 1 and " + visibleItems.size() + ".");
+					return null;
+				}
+				if (seen.add(idx)) {
+					selected.add(visibleItems.get(idx -1));
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("\nInvalid input: \"" + t + "\". Please enter item number only.");
+				return null;
+			}
+		}
+		
+		if(selected.isEmpty()) {
+			System.out.println("\nNo vallid items selected.");
+			return null;
+		}
+		
+		return selected;
+	}
+	
+	//Returns items that have no editable additional attributes
+	private ArrayList<CraftSupply> getNonEditableItems(ArrayList<CraftSupply> items) {
+		ArrayList<CraftSupply> nonEditable =  new ArrayList<CraftSupply>();
+		
+		for (CraftSupply item : items) {
+			CraftSupply catalogEntry = loadCatalogEntry(item.getName());
+			if(catalogEntry == null
+					|| (!catalogEntry.needsColor() 
+							&& !catalogEntry.needsQuantity()
+							&& !catalogEntry.needsSize())) {
+				nonEditable.add(item);
+			}
+		}
+		return nonEditable;
+	}
+	
+	private CraftSupply loadCatalogEntry(String itemName ) {
+		for (CraftSupply cs : new CatalogScreen().getItems()) {
+			if (cs.getName().equalsIgnoreCase(itemName)) return cs;
+		}
+		return null;
+	}
+	
+	//Prompts for a single editable field , 
+	// Enter = keep current value (returns "")
+	//First 'X' = close warning, second 'x' = cancel
+	private String promptEditField(Scanner kb, String fieldName, String currentValue) {
+		boolean warnedClose = false;
+		
+		while (true) {
+			System.out.print(fieldName + " [" 
+					+ (currentValue.isEmpty() ? "none" : currentValue) + "]: ");
+			String input = kb.nextLine().trim();
+			
+			if (input.equalsIgnoreCase("X") ) {
+				if (!warnedClose) {
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or enter a value to continue.\n");
+					warnedClose = true;
+				} else {
+					System.out.println("\nEdit cancelled. No changes were saved.");
+					return null;
+				}
+				continue;
+			}
+			return input;
+		}
+	}
+ 		
 		//validate
 	private boolean isValidNumberList(String input, int maxIndex) {
 		if (input == null || input.trim().isEmpty()) {
@@ -374,7 +716,6 @@ public class InventoryScreen implements Screen{
 }
                 
                     
-
 
 
 
