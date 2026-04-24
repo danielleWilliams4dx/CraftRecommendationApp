@@ -12,6 +12,7 @@ public class InventoryScreenGUI extends JFrame {
 	
 	
 	//Colors
+	
 	private static final Color BG_COLOR = new Color(244, 216, 227);
 	private static final Color NAV_COLOR = new Color(126, 78, 96);
 	private static final Color NAV_TAB_CREAM = new Color(255, 248, 240);
