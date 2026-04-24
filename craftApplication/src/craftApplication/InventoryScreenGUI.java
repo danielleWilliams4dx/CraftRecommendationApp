@@ -22,6 +22,7 @@ public class InventoryScreenGUI extends JFrame {
 	
 	
 	
+	
 	Font comba = new Font("SansSerif", Font.BOLD, 40);
 	Font forager = new Font("SansSerif", Font.BOLD, 24);
 	Font basicGothicProBold = new Font("SansSerif", Font.BOLD, 12);
