@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class InventoryScreenGUI extends JFrame {
 	
+	
 	//Colors
 	private static final Color BG_COLOR = new Color(244, 216, 227);
 	private static final Color NAV_COLOR = new Color(126, 78, 96);
