@@ -21,6 +21,7 @@ public class InventoryScreenGUI extends JFrame {
 	private static final Color BTN_BORDER = new Color(130, 70, 100); //border around filter, edit, etc. buttons
 	
 	
+	
 	Font comba = new Font("SansSerif", Font.BOLD, 40);
 	Font forager = new Font("SansSerif", Font.BOLD, 24);
 	Font basicGothicProBold = new Font("SansSerif", Font.BOLD, 12);
