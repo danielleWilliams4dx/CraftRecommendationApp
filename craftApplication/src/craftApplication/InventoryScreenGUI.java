@@ -470,9 +470,21 @@ public class InventoryScreenGUI extends JFrame {
 				 nonEditable.add(r.supply.getName());
 		 }
 		 if (!nonEditable.isEmpty()) {
-			 JOptionPane.showMessageDialog(this, String.join(", ", nonEditable) 
+
+			 //build string of non editable items
+			 String s = "";
+			 if(nonEditable.size() == 2) {
+				 s = nonEditable.get(0) + " and " + nonEditable.get(1);
+			 }else {
+				 for(int i = 0; i < nonEditable.size(); i++) {
+					 if(i > 0 && i == checked.size()-1) s += ", and ";
+					 else if(i > 0) s += ", ";
+					 s += nonEditable.get(i);
+				 }
+			 }
+			 JOptionPane.showMessageDialog(this, s 
 					 + (nonEditable.size() == 1 ? " does not" : " do not")
-					 + "have any editable attributes.\nDeselect them and try again.", 
+					 + " have any editable attributes.\nDeselect them and try again.", 
 					 "Cannot edit", JOptionPane.WARNING_MESSAGE); return;
 		 }
 		 Inventory inv = new Inventory();
@@ -486,7 +498,7 @@ public class InventoryScreenGUI extends JFrame {
 			 JPanel form = new JPanel();
 			 form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 			 form.setBorder(new EmptyBorder(10,10,10,10));
-			 JLabel h = new JLabel("Editing" + orig.getName() + " (" + (page + 1) 
+			 JLabel h = new JLabel("Editing " + orig.getName() + " (" + (page + 1) 
 					 + " of " + checked.size() + ")");
 			 h.setFont(basicGothicProBold.deriveFont(14f));
 			 form.add(h);
@@ -550,11 +562,20 @@ public class InventoryScreenGUI extends JFrame {
 		 }
 		 StringBuilder names = new StringBuilder();
 		 ArrayList<CraftSupply> toDelete = new ArrayList<>();
-		 for (int i = 0; i < checked.size(); i++) {
-			 if (i> 0 && i == checked.size()-1) names.append(", and ");
-			 else if (i > 0) names.append(", ");
-			 names.append(checked.get(i).supply.getName());
-			 toDelete.add(checked.get(i).supply);
+		 //check if there are two craft supplies so that there isn't a comma before 'and'
+		 if(checked.size() == 2) {
+			 names.append(checked.get(0).supply.getName());
+			 toDelete.add(checked.get(0).supply);
+			 names.append(" and ");
+			 names.append(checked.get(1).supply.getName());
+			 toDelete.add(checked.get(1).supply);
+		 }else {
+			 for (int i = 0; i < checked.size(); i++) {
+				 if (i> 0 && i == checked.size()-1) names.append(", and ");
+				 else if (i > 0) names.append(", ");
+				 names.append(checked.get(i).supply.getName());
+				 toDelete.add(checked.get(i).supply);
+			 }
 		 }
 		 if (JOptionPane.showConfirmDialog(this, 
 				 "Are you sure that you would like to delete your " + names + "?\nThis action cannot be undone.",
