@@ -71,6 +71,7 @@ public class InventoryScreenGUI extends JFrame {
 		root.setBackground(BG_COLOR);
 		root.add(buildNavBar(), BorderLayout.NORTH);
 		root.add(buildMainArea(), BorderLayout.CENTER);
+		root.setBorder(new EmptyBorder(0,0,60,0));
 		//Mandatory for JFRame 
 		setContentPane(root); 
 	 }
@@ -167,7 +168,7 @@ public class InventoryScreenGUI extends JFrame {
 		 JPanel p = new JPanel();
 		 p.setLayout(new BoxLayout (p, BoxLayout.Y_AXIS));
 		 p.setOpaque(false);
-		 //50x top padding, 30x bottom padding 
+		 //60x top padding, 60x bottom padding 
 		 p.setBorder(new EmptyBorder(60, 0, 60, 0));
 		 
 		 JLabel title = new JLabel("Inventory");
