@@ -40,6 +40,7 @@ public class CatalogScreenGUI extends JFrame {
 	private JLabel filterActiveLabel;
 	private JPanel itemListPanel;
 	private JScrollPane itemScroll;
+	private CatalogScreen catalog = new CatalogScreen();
 	 
 	private static class ItemRow {
 		CraftSupply supply;
@@ -263,7 +264,6 @@ public class CatalogScreenGUI extends JFrame {
 	 private void populateItemList() {
 		 itemListPanel.removeAll();
 		 itemRows.clear();
-		 CatalogScreen catalog = new CatalogScreen();
 		 int count = 0;
 		 
 		 for (CraftSupply supply : catalog.catalogItems) {
@@ -463,6 +463,7 @@ public class CatalogScreenGUI extends JFrame {
 			 //if the item does not require any additional information, add it now
 			 if(cs != null && ((!cs.needsColor() && !cs.needsQuantity()) && !cs.needsSize())) {
 				 inv.addItem(cs);
+				 catalog.appendToInventoryFile(cs);
 				 added.add(cs.getName());
 			 }else {
 				 needsInfo.add(cs);
@@ -518,8 +519,19 @@ public class CatalogScreenGUI extends JFrame {
 //				 return;
 				 break;
 			 }else {
-				//add craft supplies to the inventory with its attributes
-				 inv.addItem(new CraftSupply(cs.getName(), cs.getType(), cf != null ? cf.getText().trim() : "", qf != null ? qf.getText().trim() : "", sf != null ? sf.getText().trim() : ""));
+				//add craft supplies to the inventory with its attributes//Final inv. item with any entered attributes
+				CraftSupply itemToAdd = new CraftSupply(cs.getName(), cs.getType(), cf != null ? cf.getText().trim() : "", qf != null ? qf.getText().trim() : "", sf != null ? sf.getText().trim() : "");
+				
+				//Duplicate Check:
+				CraftSupply existing = catalog.findExistingItem(itemToAdd);
+				
+				if (existing != null ) {
+					catalog.handleDuplicateAdd(existing, itemToAdd, itemToAdd.getQuantity(), cs.needsQuantity());
+				} else {
+					inv.addItem(itemToAdd);
+					catalog.appendToInventoryFile(itemToAdd);
+				}
+				 
 				 added.add(cs.getName());
 			 }
 		 }
@@ -540,7 +552,7 @@ public class CatalogScreenGUI extends JFrame {
 			 JOptionPane.showMessageDialog(this, added.size() + " craft " 
 					 + (added.size() == 1 ? "supply was" : "supplies were") + " added to your inventory." + (!notAdded.equals("") ? ("\n" + notAdded + " could not be added due to insufficient information.") : ""));
 			 populateItemList();
-			 inv.rewriteInventoryFile();
+//			 inv.rewriteInventoryFile();
 		 }else {
 			 JOptionPane.showMessageDialog(this, "No craft supplies were added to your inventory due to insufficient information."); 
 		 }

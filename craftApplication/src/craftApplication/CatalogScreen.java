@@ -9,7 +9,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Scanner;
 
-//
+//Catalog Changes: 
+// Close-warning: Closing the 'Additional info' prompts once; second 'X' exits without saving
+//Required-field: Empty required field prints ""** [FIELD NAME] IS A REQUIRED FIELD"
+// Duplicate-add: Adding a supply that;s already in inv. increments its quantity 
+// Partial-add: if the user is in the middle of adding multiple items and cancels out (by pressing X twice) before finishing,
+// any items that were already successfully added before they cancelled are kept
+// they don't get rolled back. Then a message prints summarizing what made it in and what didn't.
+
 public class CatalogScreen implements Screen {
 	
     //catalog stores supply items, not crafts
@@ -185,8 +192,13 @@ public class CatalogScreen implements Screen {
 	
 
 	//Add-to-ionventory flow:
-	//supports single/multiple selections, spaces like "1, 2, 3" 
-	//duplicate protection, extra prompts, singular plural confirmation messages 
+	//New behaviours: 
+	// 1. Close warningL typing 'X' during additional-info prompts warns once, 
+	// second 'X' exits without saving the item (items that were processed are kept)
+	// 2. Empty submission prints "** [FIELD] IS A REQUIRED FIELD."
+	// 3. If the added item (name + attr) is already in inv., it's quantity is incremented by 1
+	// 4. If the user exits mid-flow, already added items are kept and a summary is printed
+
 	private void addSelectedSupplies(String input) {
 		Scanner kb = new Scanner(System.in);
 		
@@ -197,12 +209,22 @@ public class CatalogScreen implements Screen {
 		HashSet<Integer> seen = new HashSet<Integer>();
 		
 		String[] nums = input.split(",");
-		int addedCount = 0;
-		String singleAddedName = "";
+		
+		//Track:
+		// addedItems - names of supplies that were added
+		// skippedItems - names that couldn't be added
+		
+		ArrayList<String> addedItems = new ArrayList<String>();
+		ArrayList<String> skippedItems = new ArrayList<String>();
+		
+		boolean userCancelledMidFlow = false;
 		
 		for (String number: nums) {
+			if (userCancelledMidFlow) break;
+			
 			String token = number.trim();
 			if (token.isEmpty()) continue;
+
 			
 			try {
 				int idx = Integer.parseInt(token);
@@ -222,81 +244,219 @@ public class CatalogScreen implements Screen {
 				String color = "";
 				String quantity = "";
 				String size = "";
+				boolean cancelled = false;
 				
 				if (selected.needsColor() || selected.needsQuantity() || selected.needsSize()) {
-					System.out.println("\n[" + selected.getName() + "] requires some additional information:");
+					System.out.println("\n[" + selected.getName() + "] requires some additional information:" );
+					System.out.println("(Type 'X' to skip this item and stop adding.\n" 
+					+ " Type 'X' again to confirm skipping.)\n");
 				}
 				
 				if (selected.needsColor()) {
-					System.out.print("Color: ");
-					color = kb.nextLine().trim();
+					String result = promptRequiredField(kb, "Color", "", false);
+					if (result == null) {
+						cancelled = true;
+					}
+					else {
+						color = result;
+					}
 				}
 				
-				if (selected.needsQuantity()) {
-					System.out.print("Quantity: ");
-					quantity = kb.nextLine().trim();
-				}
-				//defines a default quantity of 1
-				else {
-					quantity = "1";
+				if (!cancelled && selected.needsQuantity()) {
+					String result = promptRequiredField(kb, "Quantity", "", false);
+					if (result == null) {
+						cancelled = true;
+					}
+					else {
+						quantity = result;
+					}
 				}
 				
-				if (selected.needsSize()) {
-					System.out.print("Size: ");
-					size = kb.nextLine().trim();
+
+				if (!cancelled && selected.needsSize()) {
+					String result = promptRequiredField(kb, "Size", "", false);
+					if (result == null) {
+						cancelled = true;
+					}
+					else {
+						size = result;
+					}
 				}
+				
+				if (cancelled) {
+					skippedItems.add(selected.getName());
+					userCancelledMidFlow = true;
+					break;
+				}
+
 				
 				//Final inv. item with any entered attributes
 				CraftSupply itemToAdd = new CraftSupply(
-						selected.getName(),
-						selected.getType(),
-						color,
-						quantity, 
-						size
+						selected.getName(), selected.getType(),
+						color, quantity, size
 				);
 				
-				//prevent exact duplicates 
-				if (!Inventory.items.contains(itemToAdd)) {
-					Inventory.items.add(itemToAdd);
+				//Duplicate Check:
+				CraftSupply existing = findExistingItem(itemToAdd);
+				
+				if (existing != null ) {
+					handleDuplicateAdd(existing, itemToAdd, quantity, selected.needsQuantity());
+					addedItems.add(selected.getName() + " (quantity updated)");
 					
-					//raw supply names for recommender
+				} else {
+					Inventory.items.add(itemToAdd);
 					if (!Inventory.justItemNames.contains(itemToAdd.getName().toLowerCase().trim())) {
 						Inventory.justItemNames.add(itemToAdd.getName().toLowerCase().trim());
 					}
-					
 					appendToInventoryFile(itemToAdd);
-					
-					addedCount++;
-					singleAddedName = selected.getName();
+					addedItems.add(selected.getName());
 				}
-				//increase count of duplicates
-				else {
-					//add quantity of new to quantity in CSV
-				}
-			
-			}  catch (NumberFormatException e ) {
+				
+			} catch (NumberFormatException e ) {
 				System.out.println("\nInvalid selection: " + token);
 			}
 		}
-		
+				
 		Collections.sort(Inventory.items, (a,b) -> a.getName().compareToIgnoreCase(b.getName()));
 		
+		//Summary message: 
 		System.out.println();
-		if (addedCount == 1) {
-			System.out.println("[" + singleAddedName + "] was successfully added to your inventory");
-		}
-		else if (addedCount > 1) {
-			System.out.println("[" + addedCount + "] craft supplies were added to your inventory");
-		}
-		else {
+		
+		int addedCount = addedItems.size();
+		
+		if(!skippedItems.isEmpty()) {
+			//Partial-add summary
+			StringBuilder skippedList = new StringBuilder();
+			for(int i = 0; i < skippedItems.size(); i++) {
+				if (i > 0) skippedList.append(", ");
+				skippedList.append(skippedItems.get(i));
+			}
+			
+			if (addedCount > 0) {
+				System.out.println(addedCount + " craft " + (addedCount == 1 ? "supply was" : "supplies were")
+						+ " added to your invenroty.");
+			}
+			
+			System.out.println(skippedList + " could not be added due to insufficient information.");
+			
+		} else if (addedCount == 1) {
+			System.out.println("[" + addedItems.get(0) + "] was successfully added to your inventory");
+			
+		} else if (addedCount > 1) {
+			System.out.println(addedCount + " craft supplies were added to your inventory");
+			
+		} else {
 			System.out.println("No supplies were added to your inventory");
 		}
 	}
 	
-	private void appendToInventoryFile(CraftSupply item) {
+	//Duplicate handling 
+	//Finds the first inventory item whose name matches
+	
+	public CraftSupply findExistingItem(CraftSupply cs) {
+		for (CraftSupply item : Inventory.items) {
+			//If the names match, compare the other attributes
+			//If they match, return the item
+			if (item.getName().equalsIgnoreCase(cs.getName())) {
+				if(item.getColor().equalsIgnoreCase(cs.getColor()) && item.getSize().equalsIgnoreCase(cs.getSize())){
+					return item;
+				}
+			}
+		}
+		return null;
+	}
+	
+	//Increments quantity of an existing inv. item 
+	//If qnt is a required field - we add the newly added entered qnt value to the existing one
+	//otherwise we add 1 to whatever numeric quntity is stored 
+	public void handleDuplicateAdd(CraftSupply existing, CraftSupply incoming, 
+			String enteredQuantity, boolean quantityIsAttribute) {
+		
+		String currentQtyStr = existing.getQuantity();
+		int currentQty = 1;
+		try {
+			currentQty = Integer.parseInt(currentQtyStr.trim());
+		} catch (NumberFormatException e) { 
+			currentQty = 1; 
+		}
+		
+		int increment = 1;
+		
+		if (quantityIsAttribute && !enteredQuantity.isEmpty()) {
+			try {
+				increment = Integer.parseInt(enteredQuantity.trim());
+			} catch (NumberFormatException e ){
+				increment = 1;
+			}
+		}
+		
+		int newQty = currentQty + increment;
+		
+		CraftSupply updated = new CraftSupply(
+				existing.getName(), existing.getType(),
+				existing.getColor(), String.valueOf(newQty), 
+				existing.getSize());
+		
+		//Replace in-memory and rewrite file
+		int itemIdx = Inventory.items.indexOf(existing);
+		if(itemIdx != -1) {
+			Inventory.items.set(itemIdx, updated);
+		}
+		
+		//Rewrite the whole file to keep it in sync
+		try (FileWriter fw = new FileWriter("inventory.csv", false)) {
+			for (CraftSupply item : Inventory.items) {
+				fw.write(item.toInventoryFileLine() + System.lineSeparator());
+			}
+		} catch (IOException e) {
+			System.err.println("Error updating inventory file: " + e.getMessage());
+		}
+				
+	}
+	
+	//Required field prompt
+	//Returns the entered string or null if the user cancelled
+	//if required = true, empty input prints the "IS A REQUIRED FIELD" warning and re-prompts.
+	//Close- warning : 1. 'X' appears, 2. 'X' returns null
+	
+	private String promptRequiredField (Scanner kb, String fieldName, 
+			String currentValue, boolean allowEmpty) {
+		boolean warnedClose = false;
+		
+		while(true) {
+			if (currentValue.isEmpty()) {
+				System.out.print( fieldName + ": ");
+			} else {
+				System.out.print(fieldName + " [" + currentValue + "]: ");
+			}
+			
+			String input = kb.nextLine().trim();
+			
+			if(input.equalsIgnoreCase("X")) {
+				if (!warnedClose) {
+					System.out.println("\n** IF YOU CLOSE THE MENU, ANY CHANGES WILL NOT BE SAVED.");
+					System.out.println("Type 'X' again to confirm, or enter a value to continue.\n");
+					warnedClose = true;
+				} else {
+					return null;
+				}
+				continue;
+			}
+			
+			if (input.isEmpty()) {
+				if (allowEmpty) return "";
+				System.out.println("** " + fieldName.toUpperCase() + " IS A REQUIRED FIELD.");
+				continue;
+			}
+			
+			return input;
+		}
+	}
+	
+	public void appendToInventoryFile(CraftSupply item) {
 		try (FileWriter fw = new FileWriter("inventory.csv", true)) {
-			fw.append(item.toInventoryFileLine()).append(System.lineSeparator());
-		} catch (IOException e ) {
+			fw.append(item.toInventoryFileLine()).append(System.lineSeparator());	
+		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
 	}
