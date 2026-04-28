@@ -457,7 +457,8 @@ public class InventoryScreenGUI extends JFrame {
 		 return activeFilters.isEmpty() ? "" : "<html>Active: " + String.join(", ", activeFilters) + "</html>";
 	 }
 	 
-	 //Recommender 
+	 //Recommender
+	 
 	 private void openRecommenderDialog() {
 		    Inventory inv = new Inventory();
 		    ArrayList<String> visibleNames = inv.getVisibleItemNames(activeFilters);
