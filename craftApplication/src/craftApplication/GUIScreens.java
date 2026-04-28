@@ -295,7 +295,7 @@ public class GUIScreens extends JFrame {
      JPanel hsFooterPanel = new JPanel(new BorderLayout());
      hsFooterPanel.setOpaque(false);
      hsFooterPanel.setBorder(new EmptyBorder(20, 40, 20,40));
-     JLabel footerLabel = new JLabel("Craft Overflow - Java GUI Prototype");
+     JLabel footerLabel = new JLabel("Craft Overflow - Home");
      footerLabel.setFont(basicGothicProBook);
      footerLabel.setForeground(new Color(130, 130, 130));
      JButton exitButton = new JButton("Exit");

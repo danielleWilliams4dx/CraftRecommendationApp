@@ -15,7 +15,7 @@ public class InventoryScreenGUI extends JFrame {
 	
 	private static final Color BG_COLOR = new Color(244, 216, 227);
 	private static final Color NAV_COLOR = new Color(126, 78, 96);
-	private static final Color NAV_TAB_CREAM = new Color(255, 248, 240);
+//	private static final Color NAV_TAB_CREAM = new Color(255, 248, 240);
 	private static final Color ACCENT_COLOR = new Color(100, 30, 65);
 	private static final Color TEXT_DARK     = new Color(70, 20, 50);
 	private static final Color TEXT_LIGHT = new Color (140, 90, 110);
@@ -52,7 +52,7 @@ public class InventoryScreenGUI extends JFrame {
 	
 	public InventoryScreenGUI() {
 		loadFonts();
-		setTitle("Craft OverFlow -- Inventory");
+		setTitle("Craft OverFlow - Inventory");
 		setSize(1000, 650);
 		//Closes just the window without shutting down the app
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
@@ -120,9 +120,9 @@ public class InventoryScreenGUI extends JFrame {
 					 //Turns antialiasing, smooths the edges of curves
 					 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 							 RenderingHints.VALUE_ANTIALIAS_ON); 
-					 g2.setColor(NAV_TAB_CREAM);
+					 g2.setColor(BG_COLOR);
 					 //rounded top corners only
-					 g2.fillRoundRect(0, 0, getWidth(), getHeight() + 20, 20, 20);
+					 g2.fillRoundRect(0, 15, getWidth(), getHeight() + 20, 30, 30);
 					 g2.dispose(); //frees the copy 
 				 }
 				 super.paintComponent(g);
@@ -168,7 +168,7 @@ public class InventoryScreenGUI extends JFrame {
 		 p.setLayout(new BoxLayout (p, BoxLayout.Y_AXIS));
 		 p.setOpaque(false);
 		 //50x top padding, 30x bottom padding 
-		 p.setBorder(new EmptyBorder(40, 0, 30, 0));
+		 p.setBorder(new EmptyBorder(60, 0, 60, 0));
 		 
 		 JLabel title = new JLabel("Inventory");
 		 title.setFont(forager.deriveFont(52f));
@@ -263,6 +263,7 @@ public class InventoryScreenGUI extends JFrame {
 		 itemListPanel.removeAll();
 		 itemRows.clear();
 		 new Inventory();
+		 int count = 0;
 		 
 		 for (CraftSupply supply : Inventory.items) {
 			 if (!activeFilters.isEmpty() && !activeFilters.contains(supply.getType())) continue;
@@ -270,16 +271,27 @@ public class InventoryScreenGUI extends JFrame {
 			 itemListPanel.add(buildItemRow(supply));
 			 //Invisible spacer beneath
 			 itemListPanel.add(Box.createVerticalStrut(6));
+			 count++;
 		 }
+		 
+		 //if the inventory is empty, add a label "No results."
+		 if(count == 0) {
+			 JLabel noResults = new JLabel("No results.");
+			 noResults.setFont(basicGothicProBold.deriveFont(15f));
+			 noResults.setForeground(TEXT_DARK);
+			 itemListPanel.add(noResults);
+		 }
+		 
 		 
 		 itemListPanel.revalidate();
 		 itemListPanel.repaint();
 	 }
 	 
 	 private JPanel buildItemRow (CraftSupply supply) {
-		 JPanel row = new JPanel(new BorderLayout());
+		 JPanel row = new JPanel();
+		 row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
 		 row.setOpaque(false);
-		 row.setBorder(new EmptyBorder(4, 0, 4, 0));
+		 row.setBorder(new EmptyBorder(4, 0, 0, 0));
 		 //Stretch as max as possible (row fills full col width)
 		 row.setMaximumSize(new Dimension (Integer.MAX_VALUE, 75));
 		 
@@ -290,20 +302,21 @@ public class InventoryScreenGUI extends JFrame {
 		 JPanel text = new JPanel();
 		 text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
 		 text.setOpaque(false);
-		 text.setBorder(new EmptyBorder(0, 8, 0, 0));
+		 text.setBorder(new EmptyBorder(3, 8, 0, 0));
 		 
 		 JLabel name = new JLabel(supply.getName());
 		 name.setFont(basicGothicProBold.deriveFont(15f));
 		 name.setForeground(TEXT_DARK);
 		 text.add(name);
+		 text.setAlignmentY(Component.TOP_ALIGNMENT);
 		 
 		 //detail lines only appear when the value exists 
 		 if(!supply.getColor().isEmpty()) text.add(detailLabel(supply.getColor()));
 		 if (!supply.getSize().isEmpty()) text.add(detailLabel(supply.getSize()));
-		 if (!supply.getQuantity().isEmpty()) text.add(detailLabel("Qty" + supply.getQuantity()));
-		 
+		 if (!supply.getQuantity().isEmpty()) text.add(detailLabel("Qty " + supply.getQuantity()));
 		 
 		 cb.addItemListener( e -> name.setForeground(cb.isSelected() ? ACCENT_COLOR : TEXT_DARK));
+		 cb.setAlignmentY(Component.TOP_ALIGNMENT);
 		 
 		 row.add(cb, BorderLayout.WEST);
 		 row.add(text, BorderLayout.CENTER);
@@ -337,9 +350,12 @@ public class InventoryScreenGUI extends JFrame {
 		 filterRow.add(filterActiveLabel);
 		 
 		 //Recommender
+		 JPanel recRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+		 recRow.setOpaque(false);
+		 recRow.setAlignmentX(Component.LEFT_ALIGNMENT);
 		 JButton recBtn = outlineBtn("Recommender");
-		 recBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 		 recBtn.addActionListener(e -> openRecommenderDialog());
+		 recRow.add(recBtn);
 		 
 		 //Edit & Delete
 		 JPanel edRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
@@ -356,7 +372,7 @@ public class InventoryScreenGUI extends JFrame {
 		 p.add(filterRow);
 		//18px spacers between each other 
 		 p.add(Box.createVerticalStrut(18));
-		 p.add(recBtn);
+		 p.add(recRow);
 		 p.add(Box.createVerticalStrut(18));
 		 p.add(edRow);
 		 return p;
@@ -408,7 +424,7 @@ public class InventoryScreenGUI extends JFrame {
 	 
 	 //Filter Dialog 
 	 private void openFilterDialog() {
-		 String[] cats = {"Adhesives", "Drawing", "Jewerly", "Painting", "Paper", "Sewing", "Tools"};
+		 String[] cats = {"Adhesives", "Drawing", "Jewerly", "Painting", "Paper", "Sewing", "Other"};
 		 JPanel p = new JPanel();
 		 p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		 p.setBorder(new EmptyBorder(10,10,10,10));
