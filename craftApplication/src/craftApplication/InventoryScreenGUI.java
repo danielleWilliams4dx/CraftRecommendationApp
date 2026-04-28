@@ -447,20 +447,20 @@ public class InventoryScreenGUI extends JFrame {
 		    ArrayList<String> visibleNames = inv.getVisibleItemNames(activeFilters);
 		 
 		    if (getCheckedRows().isEmpty()) {
-		        // No items checked — ask if they want full inventory
+		        // no items checked
 		        int choice = JOptionPane.showConfirmDialog(this,
 		                "No items selected. Generate recommendations for your entire inventory?",
 		                "Recommender", JOptionPane.YES_NO_OPTION);
 		 
 		        if (choice == JOptionPane.YES_OPTION) {
-		            // Pass "this" so the Back button can return here
+		            // pass "this" so the back button can return here
 		            RecommenderScreenGUI screen = new RecommenderScreenGUI("E", visibleNames, this);
 		            this.setVisible(false); // hide inventory while recommender is open
 		            screen.setVisible(true);
 		        }
 		 
 		    } else {
-		        // Build comma-separated index string from checked rows
+		        // build comma-separated index string from checked rows
 		        StringBuilder indices = new StringBuilder();
 		        for (int i = 0; i < itemRows.size(); i++) {
 		            if (itemRows.get(i).checkbox.isSelected()) {
@@ -468,7 +468,7 @@ public class InventoryScreenGUI extends JFrame {
 		                indices.append(i + 1);
 		            }
 		        }
-		        // Pass "this" so the Back button can return here
+		        // pass "this" so the back button can return here
 		        RecommenderScreenGUI screen = new RecommenderScreenGUI(
 		                indices.toString(), visibleNames, this);
 		        this.setVisible(false); // hide inventory while recommender is open
