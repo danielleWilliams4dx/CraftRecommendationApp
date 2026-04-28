@@ -18,6 +18,7 @@ public class Recommender {
 	//lets recommendation printing star missing items correctly for both 
 	// (E) full inv mode
     // subset mode (1,2,3)	
+	
 	private ArrayList<String> availableItemNames = new ArrayList<String>();
 	
 	
