@@ -21,6 +21,7 @@ public class Recommender {
 	private ArrayList<String> availableItemNames = new ArrayList<String>();
 	
 	
+	
 	//input = "E" or comma-seperated indices
 	//inv = full inventory object
 	//visibleItemNames = item names in the same order the user sees on the Inv screen 
@@ -36,6 +37,7 @@ public class Recommender {
 		ArrayList<String> allInventoryItemNames = normalizeNames(inv.getJustItemNames());
 		
 		System.out.println("\n");
+		
 		
 		
 		//Generate recommendations using the full inventory
@@ -83,7 +85,8 @@ public class Recommender {
 		}
 		
 		//Perfect matches come first
-		Boolean showMore = false;
+		Boolean showMore = true;
+		
 		if (!perfectRecs.isEmpty()) {
 			recs.addAll(perfectRecs);
 			
@@ -97,42 +100,37 @@ public class Recommender {
 				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
 			//check if user wants more matches
-			Scanner kb =new Scanner(System.in);
-			System.out.println("Type 'Y' to show close matches");
-			if (kb.next().toUpperCase().equals("Y")){
-				showMore = true;
-			}
+//			Scanner kb =new Scanner(System.in);
+//			System.out.println("Type 'Y' to show close matches");
+//			if (kb.next().toUpperCase().equals("Y")){
+//				showMore = true;
+//			}
 			
 		}
 		
 		//If no perf match exist, show close matches (+1/+2 missing materials)
-		else if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()||showMore) {
-			recs.addAll(closeRecsPlus1);
-			recs.addAll(closeRecsPlus2);
+		if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
 			
-			int totalCloseRecsSize = closeRecsPlus1.size() + closeRecsPlus2.size();
-			
-			if (totalCloseRecsSize == 1) {
-				System.out.println("Here is 1 close match to your criteria.");
-			} else {
-				System.out.println("Here are " + totalCloseRecsSize + " close matches to your criteria");
+			//only add close matches if showMore is true if we have perfect matches
+			if (perfectRecs.isEmpty() || showMore) {
+				int startIdx = recs.size();
+				recs.addAll(closeRecsPlus1);
+				recs.addAll(closeRecsPlus2);
+				
+				int totalClose = closeRecsPlus1.size() + closeRecsPlus2.size();
+				System.out.println("\nShowing " + totalClose + " close matches. Additional supplies needed are *starred*\n");
+				
+				for (int i = startIdx; i < recs.size(); i++) {
+					System.out.println(recs.get(i).toStringWithIndex(i + 1, allInventoryItemNames));
+				}
 			}
-			
-			System.out.println("Additional supplies that you need are *starred*\n");
-			
-			// Use the inventory to print crafts so that additional materials that are in the inventory aren't starred
-			for (int i = 0; i< recs.size(); i++) {
-				System.out.println(recs.get(i).toStringWithIndex(i + 1, allInventoryItemNames));
-			}
-			
 		}
 		
-		
-		//No matches at all
-		else {
+		if (recs.isEmpty()) {
 			System.out.println("Sorry, we could not find any crafts that match your criteria.");
 		}
 	}
+	
 	
 	//Lets InvScreen view rec details with the correct starred materials
 	public ArrayList<String> getAvailableItemNames() {
