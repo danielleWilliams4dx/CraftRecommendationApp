@@ -38,6 +38,7 @@ public class Recommender {
 		System.out.println("\n");
 		
 		
+		
 		//Generate recommendations using the full inventory
 		if (input.equals("E")) {
 			availableItemNames = normalizeNames(inv.getJustItemNames());
