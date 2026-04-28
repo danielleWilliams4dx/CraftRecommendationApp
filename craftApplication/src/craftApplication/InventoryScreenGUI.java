@@ -599,7 +599,7 @@ public class InventoryScreenGUI extends JFrame {
 			 //get checked rows, warn and exit if none 
 			 JOptionPane.showMessageDialog(this, "Please check at least one item to delete.",
 					 "Delete", JOptionPane.WARNING_MESSAGE); 
-			 return;
+			 return; 
 		 }
 		 StringBuilder names = new StringBuilder();
 		 ArrayList<CraftSupply> toDelete = new ArrayList<>();

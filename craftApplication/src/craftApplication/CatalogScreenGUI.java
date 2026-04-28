@@ -511,7 +511,7 @@ public class CatalogScreenGUI extends JFrame {
 			 //null - no custom icon image
 			 //opts - the button labels array
 			 //opts[0] - which button is default 
-			 //returns the ind of the button clicked 
+			 //returns the ind of the button clicked  
 			 if (JOptionPane.showOptionDialog(this, form, "Add Craft Supply",
 					 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, opts, opts[0]) != 0) {
 //				 JOptionPane.showMessageDialog(this, "Adding " + orig.getName() + " cancelled.");

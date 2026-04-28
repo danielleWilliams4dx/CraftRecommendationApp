@@ -21,7 +21,7 @@ public class GUIScreens extends JFrame {
   * - header
   * - welcome/hero section
   * - navigation buttons
-  * - footer
+  * - footer 
   */
 	
 	//CHANGE DEFAULT FONTS
