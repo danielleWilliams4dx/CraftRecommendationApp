@@ -716,10 +716,3 @@ public class InventoryScreen implements Screen{
 }
                 
                     
-
-
-
-
-
-
-

@@ -70,9 +70,16 @@ public class CatalogScreenGUI extends JFrame {
 		//CENTER (fills everything remaining)
 		JPanel root = new JPanel(new BorderLayout());
 		root.setBackground(BG_COLOR);
-		root.add(buildNavBar(), BorderLayout.NORTH);
-		root.add(buildMainArea(), BorderLayout.CENTER);
-		root.setBorder(new EmptyBorder(0,0,60,0));
+		
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setOpaque(false);
+		wrapper.add(buildNavBar(), BorderLayout.NORTH);
+		wrapper.add(buildMainArea(), BorderLayout.CENTER);
+		wrapper.setPreferredSize(new Dimension(900, 1460));
+		JScrollPane sp = new JScrollPane(wrapper);
+		sp.setOpaque(false);
+		root.add(sp);		
+		root.setBorder(new EmptyBorder(0,0,0,0));
 		//Mandatory for JFRame 
 		setContentPane(root); 
 	 }
@@ -180,8 +187,8 @@ public class CatalogScreenGUI extends JFrame {
 		 
 		 JPanel underline = new JPanel();
 		 underline.setBackground(ACCENT_COLOR);
-		 underline.setMaximumSize(new Dimension (220, 3));
-		 underline.setPreferredSize(new Dimension(220,3));
+		 underline.setMaximumSize(new Dimension (165, 3));
+		 underline.setPreferredSize(new Dimension(165,3));
 		 underline.setAlignmentX(Component.CENTER_ALIGNMENT);
 		 p.add(title);
 		 p.add(Box.createVerticalStrut(8));

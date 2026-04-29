@@ -69,9 +69,15 @@ public class InventoryScreenGUI extends JFrame {
 		//CENTER (fills everything remaining)
 		JPanel root = new JPanel(new BorderLayout());
 		root.setBackground(BG_COLOR);
-		root.add(buildNavBar(), BorderLayout.NORTH);
-		root.add(buildMainArea(), BorderLayout.CENTER);
-		root.setBorder(new EmptyBorder(0,0,60,0));
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setOpaque(false);
+		wrapper.add(buildNavBar(), BorderLayout.NORTH);
+		wrapper.add(buildMainArea(), BorderLayout.CENTER);
+		wrapper.setPreferredSize(new Dimension(900, 940));
+		JScrollPane sp = new JScrollPane(wrapper);
+		sp.setOpaque(false);
+		root.add(sp);		
+		root.setBorder(new EmptyBorder(0,0,0,0));
 		//Mandatory for JFRame 
 		setContentPane(root); 
 	 }
