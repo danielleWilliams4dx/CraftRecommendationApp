@@ -17,6 +17,9 @@ public class Craft {
 	private String description;
 	private String[] materials;
 	private String line;
+	//new ones
+	private String link;
+	private String instructions;
 	
 	
 	public Craft(String line) {
@@ -27,7 +30,9 @@ public class Craft {
         this.level = values[2];
         this.timeEst = values[3];
         this.description = values[4];
-        this.materials = Arrays.copyOfRange(values, 5, values.length);
+        this.link = values[5];
+        this.instructions = values[6];
+        this.materials = Arrays.copyOfRange(values, 7, values.length);
         
         //trim materials so comparisons work reliably 
         for (int i = 0; i< this.materials.length; i++ ) {
@@ -46,6 +51,11 @@ public class Craft {
 				+ "   " + this.description + "\n";
 	} 
 	
+	//new String method to be used when displaying instructions
+	public String showInstructions() {
+		return "Source: "+this.link+"\nInstructions\n"+this.instructions;
+	}
+	
 	//fix: allowing screens to print correct numbering (1 based)
 	//when full inventory object is available
 	public String toStringWithIndex(int index, Inventory inv) {
@@ -61,16 +71,12 @@ public class Craft {
 	
 	private String materialsString() {
 		String s = "";
-		for (int i = 0; i < materials.length; i++) {
-			String obj = materials[i];
-			s = s + obj; 
-			if(i < materials.length-1) {
-				s += ", ";
-			}
+		for (String obj : materials) {
+			s = s + obj + " ";
 		}
-		
 		return s.trim();
 	}
+
 	
 	public String[] getMaterials() {
 		return materials;
@@ -103,22 +109,14 @@ public class Craft {
 				+ "   Type: " + this.type + "\n"
 				+ "   Materials:\n   ";
 		
-		for (int i = 0; i < this.materials.length; i++) {
-			String item = this.materials[i];
+		for (String item : this.materials) {
 			String cleaned = item.trim();
 			if (availableSet.contains(cleaned.toLowerCase())) {
-				s += cleaned;
-				if(i < materials.length-1) {
-					s += ", ";
-				}
+				s += cleaned + " ";
 			} else {
 				s += "*" + cleaned + "*";
-				if(i < materials.length-1) {
-					s += ", ";
 				}
 			}
-
-		}
 		
 
 		s +=  "\n   Skill Level: " + this.level + "\n"
