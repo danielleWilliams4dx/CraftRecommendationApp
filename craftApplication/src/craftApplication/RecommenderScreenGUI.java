@@ -83,7 +83,7 @@ public class RecommenderScreenGUI extends JFrame {
         // Called from end of setup() so cardArea is guaranteed to exist
         
         Inventory inv = new Inventory();
-        Recommender rec = new Recommender(false, mode, inv, vis);
+        Recommender rec = new Recommender(true, mode, inv, vis);
         recs = rec.recs;
         availableItems = rec.getAvailableItemNames();
         currentIndex = 0;
