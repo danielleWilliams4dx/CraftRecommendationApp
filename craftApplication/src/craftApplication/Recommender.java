@@ -26,7 +26,7 @@ public class Recommender {
 	//inv = full inventory object
 	//visibleItemNames = item names in the same order the user sees on the Inv screen 
 	
-	public Recommender(String input, Inventory inv, ArrayList<String> visibleItemNames) {
+	public Recommender(boolean gui, String input, Inventory inv, ArrayList<String> visibleItemNames) {
 		
 		ArrayList<Craft> allCrafts = loadCrafts();
 		
@@ -99,20 +99,22 @@ public class Recommender {
 			for (int i = 0; i < recs.size(); i++) {
 				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
-//			check if user wants more matches, if there are any
-			Scanner kb =new Scanner(System.in);
-			if(!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
-				System.out.println("Type 'Y' to show close matches or any other key to continue.\n\nYour Answer: ");
-				if (kb.next().toUpperCase().equals("Y")){
-					showMore = true;
-					System.out.println();
+//			check if user wants more matches (from the console, if there are any
+			if(!gui) {
+				Scanner kb =new Scanner(System.in);
+				if(!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
+					System.out.println("Type 'Y' to show close matches or any other key to continue.\n\nYour Answer: ");
+					if (kb.next().toUpperCase().equals("Y")){
+						showMore = true;
+						System.out.println();
+					}else {
+						System.out.println();
+						return;
+					}
 				}else {
 					System.out.println();
 					return;
 				}
-			}else {
-				System.out.println();
-				return;
 			}
 		}
 		

@@ -433,7 +433,7 @@ public class InventoryScreen implements Screen{
 		}
 			
 		//pass the visible inventory order so 1,2 matches what the user sees on the screen
-		Recommender rec = new Recommender(answer, this.inv, visibleItemNames);
+		Recommender rec = new Recommender(false, answer, this.inv, visibleItemNames);
 			
 		//if no recommendations exist, let the user return cleanly 
 		if (rec.recs.isEmpty()) {

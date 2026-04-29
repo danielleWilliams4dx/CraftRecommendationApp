@@ -345,7 +345,7 @@ public class HomeScreenGUI extends JFrame {
 	        // Called from end of setup() so cardArea is guaranteed to exist
 	        
 	        Inventory inv = new Inventory();
-	        Recommender rec = new Recommender(mode, inv, vis);
+	        Recommender rec = new Recommender(true, mode, inv, vis);
 	        recs = rec.recs;
 	        availableItems = rec.getAvailableItemNames();
 	        currentIndex = 0;
@@ -757,10 +757,6 @@ public class HomeScreenGUI extends JFrame {
 				 //Fallbacks already assigned at declaration - app continues 
 			 }
 		 }
-
-		 public static void main (String[] args) {
-			 SwingUtilities.invokeLater(() -> new HomeScreenGUI().setVisible(true));
-		 }
 		 
 		 class RoundedPanel extends JPanel {
 			 private final int cornerRadius;
@@ -786,5 +782,9 @@ public class HomeScreenGUI extends JFrame {
 	             g2.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius);
 	             g2.dispose();
 		     }
+		 }
+		 
+		 public static void main (String[] args) {
+			 SwingUtilities.invokeLater(() -> new HomeScreenGUI().setVisible(true));
 		 }
 }
