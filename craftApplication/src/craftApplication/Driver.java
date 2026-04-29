@@ -18,7 +18,6 @@ public class Driver {
 		HomeScreen hs = new HomeScreen();
 		//create other screens and put them in an array to pass easier
 		InventoryScreen is = new InventoryScreen();
-		
 		CatalogScreen cs = new CatalogScreen();
 		SavedCraftScreen scs = new SavedCraftScreen();
 		Screen[] screens = new Screen[4];

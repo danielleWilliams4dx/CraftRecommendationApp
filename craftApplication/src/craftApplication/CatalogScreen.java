@@ -333,8 +333,8 @@ public class CatalogScreen implements Screen {
 			}
 			
 			if (addedCount > 0) {
-				System.out.println(addedCount + " craft " + (addedCount == 1 ? "supply was" : "supplies were")
-						+ " added to your invenroty.");
+				System.out.println(addedCount + " craft " + (addedCount == 1 ? " supply was" : " supplies were")
+						+ " added to your inventory.");
 			}
 			
 			System.out.println(skippedList + " could not be added due to insufficient information.");
