@@ -10,6 +10,7 @@ import java.io.FileReader;
 
 public class Recommender {
 	
+	
 	//stores current recs so InventoryScreen can view/save them
 	ArrayList<Craft> recs = new ArrayList<Craft>();
 	
@@ -18,6 +19,7 @@ public class Recommender {
 	// (E) full inv mode
     // subset mode (1,2,3)	
 	private ArrayList<String> availableItemNames = new ArrayList<String>();
+	
 	
 	
 	//input = "E" or comma-seperated indices
@@ -29,10 +31,13 @@ public class Recommender {
 		ArrayList<Craft> allCrafts = loadCrafts();
 		
 		ArrayList<Craft> perfectRecs = new ArrayList<Craft>();
-		ArrayList<Craft> closeRecs = new ArrayList<Craft>();
-
+		ArrayList<Craft> closeRecsPlus1 = new ArrayList<Craft>();
+		ArrayList<Craft> closeRecsPlus2 = new ArrayList<Craft>();
+		
+		ArrayList<String> allInventoryItemNames = normalizeNames(inv.getJustItemNames());
 		
 		System.out.println("\n");
+		
 		
 		
 		//Generate recommendations using the full inventory
@@ -52,25 +57,37 @@ public class Recommender {
 		}
 
 		for (Craft craft : allCrafts) {
-			int missing = countMissingMaterials(craft, availableItemNames);
-
+			int[] res = countMissingMaterials(craft, availableItemNames, allInventoryItemNames);
+			int missing = res[0];
+			int matInInv = res[1];
+			
 			if (missing == 0) {
 				perfectRecs.add(craft);
-			} else if (missing == 1 || missing == 2) { 
-				closeRecs.add(craft);
+			}
+			// if the material is not in the selection but is in the inventory, 
+			// add it to the front of the recommendation tier
+			else if (missing == 1) {
+				if(matInInv == 1) {
+					closeRecsPlus1.add(0, craft);
+				}
+				else {
+					closeRecsPlus1.add(craft);
+				}
+			}
+			else if (missing == 2) {
+				if(matInInv == 1) {
+					closeRecsPlus2.add(0, craft);
+				}
+				else {
+					closeRecsPlus2.add(craft);
+				}
 			}
 		}
 		
-		boolean hasPerfect = !perfectRecs.isEmpty();
-		boolean hasClose = !closeRecs.isEmpty();
+		//Perfect matches come first
+		Boolean showMore = true;
 		
-		//No matches 
-		if (!hasPerfect && !hasClose) {
-			System.out.println("Sorry, we could not find any crafts that match your critiria.");
-		}
-		
-		//Perfect matches section (always shown when exist) 
-		if (hasPerfect) {
+		if (!perfectRecs.isEmpty()) {
 			recs.addAll(perfectRecs);
 			
 			if (perfectRecs.size() == 1) {
@@ -82,50 +99,39 @@ public class Recommender {
 			for (int i = 0; i < recs.size(); i++) {
 				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
+			//check if user wants more matches
+//			Scanner kb =new Scanner(System.in);
+//			System.out.println("Type 'Y' to show close matches");
+//			if (kb.next().toUpperCase().equals("Y")){
+//				showMore = true;
+//			}
+			
 		}
 		
-		if (hasClose) {
-			recs.addAll(closeRecs);
-			boolean displayClose = false;
+		//If no perf match exist, show close matches (+1/+2 missing materials)
+		if (!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
 			
-			//numbering continues from where perfect matches left off
-			int offset = perfectRecs.size();
-			
-			if (hasPerfect) {
-				if (closeRecs.size() == 1) {
-					System.out.println("There is also 1 close match (1-2 missing supplies).");
-					System.out.println("Type 'D' to display it or any other key to continue.\n\nYour Answer: ");
-				} else {
-					System.out.println("There is also " + closeRecs.size() + " close matches (1-2 missing supplies).");
-					System.out.println("Type 'D' to display them or any other key to continue.\n\nYour Answer: ");
-				}
-				Scanner s = new Scanner(System.in);
-				if(s.nextLine().trim().toUpperCase().equals("D")) {
-					displayClose = true;
-					System.out.println();
-				}
-				s.close();
-			} else {
-				//Only close matches - no perfect matches exist
-				//System.out.println("We could not find any crafts that perfectly match your critiria.");
-				if(closeRecs.size() == 1) {
-					System.out.println("Here is 1 close match to your criteria.");
-				} else {
-					System.out.println("Here are " + closeRecs.size() + " close matches to your critiria.");
-				}
-			}
-			//display close recommendations if the user selected to do so or if there are no perfect matches
-			if(!hasPerfect || (hasPerfect && displayClose)) {
-				System.out.println("Additional supplies that you need are *starred*\n");
+			//only add close matches if showMore is true if we have perfect matches
+			if (perfectRecs.isEmpty() || showMore) {
+				int startIdx = recs.size();
+				recs.addAll(closeRecsPlus1);
+				recs.addAll(closeRecsPlus2);
 				
-				for (int i = 0; i < closeRecs.size(); i++ ) {
-					System.out.println(closeRecs.get(i).toStringWithIndex(offset + i + 1, availableItemNames));
+				int totalClose = closeRecsPlus1.size() + closeRecsPlus2.size();
+				System.out.println("\nShowing " + totalClose + " close matches. Additional supplies needed are *starred*\n");
+				
+				for (int i = startIdx; i < recs.size(); i++) {
+					System.out.println(recs.get(i).toStringWithIndex(i + 1, allInventoryItemNames));
 				}
 			}
 		}
+		
+		if (recs.isEmpty()) {
+			System.out.println("Sorry, we could not find any crafts that match your criteria.");
+		}
 	}
-
-
+	
+	
 	//Lets InvScreen view rec details with the correct starred materials
 	public ArrayList<String> getAvailableItemNames() {
 		return new ArrayList<String>(availableItemNames);
@@ -139,7 +145,7 @@ public class Recommender {
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			while ((line = br.readLine()) != null) {
-				if (line.trim().isEmpty()) continue;
+				if (line.trim().isEmpty());
 				crafts.add(new Craft (line));
 			}
 		} catch (IOException e) {
@@ -205,17 +211,23 @@ public class Recommender {
 	}
 	
 	//Count how many materials from a craft are missing from the supplied item list
-	private int countMissingMaterials(Craft craft, ArrayList<String> availableItems) {
+	private int[] countMissingMaterials(Craft craft, ArrayList<String> availableItems , ArrayList<String> allInventoryItems) {
 		int count = 0;
+		int matInInv = 0;
 		
 		for (String mat : craft.getMaterials()) {
 			String cleaned = mat.trim().toLowerCase();
 			if(!availableItems.contains(cleaned)) {
 				count++;
+				// Note it the material is not in the material selection but is in the inventory
+				if(allInventoryItems.contains(cleaned)) {
+					matInInv = 1;
+				}
 			}
 		}
 		
-		return count;
+		int[] res = {count, matInInv};
+		return res;
 	}
 	
 }
