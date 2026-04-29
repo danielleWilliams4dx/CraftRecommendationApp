@@ -136,11 +136,10 @@ public class RecommenderScreenGUI extends JFrame {
         tab.add(lbl, BorderLayout.CENTER);
         tab.setCursor(new Cursor(Cursor.HAND_CURSOR));
         tab.addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(RecommenderScreenGUI.this,
-                        "Navigate to: " + label);
-            }
-        });
+			 @Override public void mouseClicked(MouseEvent e) {
+				 switchScreens(label); 
+			 }
+		 });
         return tab;
     }
 
@@ -494,6 +493,23 @@ public class RecommenderScreenGUI extends JFrame {
         btn.setPreferredSize(new Dimension(40, 40));
         return btn;
     }
+    
+    private void switchScreens(String name) {
+		 this.setVisible(false);
+		 if(name.equals("Home")) {
+			 HomeScreenGUI screen = new HomeScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Inventory")) {
+			 InventoryScreenGUI screen = new InventoryScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Catalog")) {
+			 CatalogScreenGUI screen = new CatalogScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Saved Crafts")){
+//			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
+//			 screen.setVisible(true);
+		 }
+	 }	 
 
     private void loadFonts(){
         try {

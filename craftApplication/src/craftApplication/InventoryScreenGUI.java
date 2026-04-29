@@ -147,8 +147,7 @@ public class InventoryScreenGUI extends JFrame {
 		 tab.setCursor(new Cursor (Cursor.HAND_CURSOR));
 		 tab.addMouseListener(new MouseAdapter() {
 			 @Override public void mouseClicked(MouseEvent e) {
-				 JOptionPane.showMessageDialog(InventoryScreenGUI.this, 
-						 active ? "You are already on Inventory" : "Navigate to: " + label);
+				 switchScreens(label); 
 			 }
 		 });
 		 
@@ -421,6 +420,23 @@ public class InventoryScreenGUI extends JFrame {
 			 }
 		 });
 		 return btn;
+	 }
+	 
+	 private void switchScreens(String name) {
+		 this.setVisible(false);
+		 if(name.equals("Home")) {
+			 HomeScreenGUI screen = new HomeScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Inventory")) {
+			 InventoryScreenGUI screen = new InventoryScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Catalog")) {
+			 CatalogScreenGUI screen = new CatalogScreenGUI();
+			 screen.setVisible(true);
+		 }else if(name.equals("Saved Crafts")){
+//			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
+//			 screen.setVisible(true);
+		 }
 	 }
 	 
 	 //Filter Dialog 
