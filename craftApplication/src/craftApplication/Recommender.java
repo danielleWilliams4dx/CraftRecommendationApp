@@ -99,13 +99,21 @@ public class Recommender {
 			for (int i = 0; i < recs.size(); i++) {
 				System.out.println(recs.get(i).toStringWithIndex(i + 1,  availableItemNames));
 			}
-			//check if user wants more matches
-//			Scanner kb =new Scanner(System.in);
-//			System.out.println("Type 'Y' to show close matches");
-//			if (kb.next().toUpperCase().equals("Y")){
-//				showMore = true;
-//			}
-			
+//			check if user wants more matches, if there are any
+			Scanner kb =new Scanner(System.in);
+			if(!closeRecsPlus1.isEmpty() || !closeRecsPlus2.isEmpty()) {
+				System.out.println("Type 'Y' to show close matches or any other key to continue.\n\nYour Answer: ");
+				if (kb.next().toUpperCase().equals("Y")){
+					showMore = true;
+					System.out.println();
+				}else {
+					System.out.println();
+					return;
+				}
+			}else {
+				System.out.println();
+				return;
+			}
 		}
 		
 		//If no perf match exist, show close matches (+1/+2 missing materials)
@@ -118,7 +126,7 @@ public class Recommender {
 				recs.addAll(closeRecsPlus2);
 				
 				int totalClose = closeRecsPlus1.size() + closeRecsPlus2.size();
-				System.out.println("\nShowing " + totalClose + " close matches. Additional supplies needed are *starred*\n");
+				System.out.println("Showing " + totalClose + " close matches. Additional supplies needed are *starred*\n");
 				
 				for (int i = startIdx; i < recs.size(); i++) {
 					System.out.println(recs.get(i).toStringWithIndex(i + 1, allInventoryItemNames));
