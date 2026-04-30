@@ -413,7 +413,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         content.setOpaque(false);
         content.setBorder(new EmptyBorder(12, 16, 12, 16));
 
-        // ── name row ─────────────────────────────────────────────────────────
+        // ── name row 
         JPanel nameRow = new JPanel(new BorderLayout(8, 0));
         nameRow.setOpaque(false);
         nameRow.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -426,7 +426,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         content.add(nameRow);
         content.add(Box.createVerticalStrut(8));
 
-        // ── level badge + time row ────────────────────────────────────────────
+        // ── level badge + time row 
         JPanel levelTimeRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         levelTimeRow.setOpaque(false);
         levelTimeRow.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -441,7 +441,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         content.add(levelTimeRow);
         content.add(Box.createVerticalStrut(10));
 
-        // ── Materials ─────────────────────────────────────────────────────────
+        // ── Materials 
         JLabel matHdr = new JLabel("Materials");
         matHdr.setFont(basicGothicProBold.deriveFont(15f));
         matHdr.setForeground(TEXT_DARK);
@@ -460,7 +460,7 @@ public class SavedCraftsScreenGUI extends JFrame {
 
         content.add(Box.createVerticalStrut(8));
 
-        // ── Description ───────────────────────────────────────────────────────
+        // ── Description 
         if (!desc.isEmpty()) {
             JLabel dh = new JLabel("Description");
             dh.setFont(basicGothicProBold.deriveFont(15f));
@@ -477,7 +477,7 @@ public class SavedCraftsScreenGUI extends JFrame {
             content.add(Box.createVerticalStrut(12));
         }
 
-        // ── View instructions ─────────────────────────────────────────────────
+        // ── View instructions 
         JButton vb = viewBtn(craft);
         vb.setAlignmentX(Component.LEFT_ALIGNMENT);
         content.add(vb);
@@ -487,7 +487,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         return card;
     }
 
-    // ── Material row — BoxLayout X_AXIS with rigid JPanel circles ────────────
+    // ── Material row 
     private JPanel materialRow(String material, boolean owned) {
         JPanel row = new JPanel(new BorderLayout(8, 0));
         row.setOpaque(false);

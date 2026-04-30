@@ -624,9 +624,9 @@ public class CatalogScreenGUI extends JFrame {
 			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Saved Crafts")){
-//			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
-			 //if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//			 screen.setVisible(true);
+			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			 screen.setVisible(true);
 		 }
 	 }
 	 
