@@ -322,7 +322,7 @@ public class HomeScreenGUI extends JFrame {
         cardArea.repaint();
     }
 
-    // ── buildCard — every child LEFT_ALIGNMENT, green theme ──────────────────
+    // ── buildCard — every child LEFT_ALIGNMENT, green theme
     private JPanel buildCard(Craft craft, boolean showShadow) {
         String[] p = craft.getLine().split(",");
         String name  = p.length > 0 ? p[0].trim() : "";
@@ -444,7 +444,7 @@ public class HomeScreenGUI extends JFrame {
         return card;
     }
 
-    // ── materialRow — rigid JPanel circles, green theme ──────────────────────
+    // ── materialRow — rigid JPanel circles, green theme 
     private JPanel materialRow(String material, boolean owned) {
         JPanel row = new JPanel(new BorderLayout(8, 0));
         row.setOpaque(false);
