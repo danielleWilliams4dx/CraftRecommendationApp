@@ -54,7 +54,7 @@ public class CatalogScreenGUI extends JFrame {
 	public CatalogScreenGUI() {
 		loadFonts();
 		setTitle("Craft OverFlow - Catalog");
-		setSize(1000, 650);
+		setSize(DriverGUI.windowSize);
 		//Closes just the window without shutting down the app
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
 		//Centers the window on the screen
@@ -605,21 +605,30 @@ public class CatalogScreenGUI extends JFrame {
 	 }
 	 
 	 private void switchScreens(String name) {
-		 this.setVisible(false);
+		 //save current size back to DriverGUI before closing 
+		 DriverGUI.windowSize = this.getSize();;
+		 DriverGUI.isMaximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+		 
+		 this.setVisible(false); 
+		 
 		 if(name.equals("Home")) {
 			 HomeScreenGUI screen = new HomeScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Inventory")) {
 			 InventoryScreenGUI screen = new InventoryScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Catalog")) {
 			 CatalogScreenGUI screen = new CatalogScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Saved Crafts")){
 //			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
+			 //if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //			 screen.setVisible(true);
 		 }
-	 }	 
+	 }
 	 
 	 //Loops through every tracked row
 	 private ArrayList<ItemRow> getCheckedRows() {
