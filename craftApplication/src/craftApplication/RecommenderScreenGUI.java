@@ -62,7 +62,7 @@ public class RecommenderScreenGUI extends JFrame {
 
     private void setup() {
         setTitle("Craft Overflow — Recommendations");
-        setSize(1000, 650);
+        setSize(DriverGUI.windowSize);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
@@ -494,22 +494,31 @@ public class RecommenderScreenGUI extends JFrame {
         return btn;
     }
     
-    private void switchScreens(String name) {
-		 this.setVisible(false);
+	 private void switchScreens(String name) {
+		 //save current size back to DriverGUI before closing 
+		 DriverGUI.windowSize = this.getSize();;
+		 DriverGUI.isMaximized = (this.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+		 
+		 this.setVisible(false); 
+		 
 		 if(name.equals("Home")) {
 			 HomeScreenGUI screen = new HomeScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Inventory")) {
 			 InventoryScreenGUI screen = new InventoryScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Catalog")) {
 			 CatalogScreenGUI screen = new CatalogScreenGUI();
+			 if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			 screen.setVisible(true);
 		 }else if(name.equals("Saved Crafts")){
 //			 SavedCraftsScreenGUI screen = new SavedCraftsScreenGUI();
+			 //if (DriverGUI.isMaximized) screen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //			 screen.setVisible(true);
 		 }
-	 }	 
+	 }
 
     private void loadFonts(){
         try {
