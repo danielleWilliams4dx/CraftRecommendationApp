@@ -50,7 +50,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         wrapper.setOpaque(false);
         wrapper.add(buildNavBar(),   BorderLayout.NORTH);
         wrapper.add(buildMainArea(), BorderLayout.CENTER);
-        wrapper.setPreferredSize(new Dimension(900, 900));
+        wrapper.setPreferredSize(new Dimension(900, 1000));
         JScrollPane sp = new JScrollPane(wrapper);
         sp.setOpaque(false);
         sp.getViewport().setOpaque(false);
@@ -163,7 +163,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         gridPanel = new JPanel(new GridLayout(2, 3, 20, 20));
         gridPanel.setOpaque(false);
         populateGrid();
-        outer.add(gridPanel, BorderLayout.NORTH);
+        outer.add(gridPanel, BorderLayout.CENTER);
         return outer;
     }
 
