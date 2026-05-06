@@ -55,7 +55,7 @@ public class InventoryScreenGUI extends JFrame {
 		setTitle("Craft OverFlow - Inventory");
 		setSize(DriverGUI.windowSize);
 		//Closes just the window without shutting down the app
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//Centers the window on the screen
 		setLocationRelativeTo(null);
 		//Allows the user to drag the window edges to resize it 

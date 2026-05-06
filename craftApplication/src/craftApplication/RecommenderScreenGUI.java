@@ -63,7 +63,7 @@ public class RecommenderScreenGUI extends JFrame {
         setTitle("Craft Overflow — Recommendations");
         setSize(DriverGUI.windowSize);
         if (DriverGUI.isMaximized) setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
         JPanel root = new JPanel(new BorderLayout());
@@ -72,8 +72,16 @@ public class RecommenderScreenGUI extends JFrame {
         body.setBackground(BG_COLOR);
         body.add(buildTopBar(),    BorderLayout.NORTH);
         body.add(buildSlideshow(), BorderLayout.CENTER);
-        root.add(buildNavBar(), BorderLayout.NORTH);
-        root.add(body,          BorderLayout.CENTER);
+        
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setOpaque(false);
+        wrapper.add(buildNavBar(), BorderLayout.NORTH);
+        wrapper.add(body, BorderLayout.CENTER);
+        wrapper.setPreferredSize(new Dimension(900, 800));
+        JScrollPane sp = new JScrollPane(wrapper);
+        sp.setOpaque(false);
+        root.add(sp);
+       
         setContentPane(root);
         generateRecs(pendingMode, pendingVis);
     }

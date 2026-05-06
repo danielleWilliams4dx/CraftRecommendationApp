@@ -75,7 +75,7 @@ public class HomeScreenGUI extends JFrame {
         setTitle("Craft OverFlow - Home");
         setSize(DriverGUI.windowSize);
         if (DriverGUI.isMaximized) setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
 
@@ -648,8 +648,8 @@ public class HomeScreenGUI extends JFrame {
     }
 
     private JButton createMenuButton(String title, String description) {
-        JButton button = new JButton("<html><div style='text-align: left; background-color: #136F63'>" +
-                "<span style='font-size: 18px; font-weight: bold; color: white'>" + title + "</span><br>" +
+        JButton button = new JButton("<html><div style='text-align: left; background-color: #136F63;'>" +
+                "<span style='font-size: 18px; font-weight: bold; color: white;'>" + title + "</span><br>" +
                 "<span style='font-size: 12px; color: white;'>" + description + "</span>" +
                 "</div></html>") {
             @Override protected void paintComponent(Graphics g) {

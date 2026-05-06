@@ -38,7 +38,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         setTitle("Craft Overflow — Saved Crafts");
         setSize(DriverGUI.windowSize);
         if (DriverGUI.isMaximized) setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
 
