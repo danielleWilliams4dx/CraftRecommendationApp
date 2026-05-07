@@ -562,6 +562,8 @@ public class InventoryScreenGUI extends JFrame {
 		 Inventory inv = new Inventory();
 		 //items successfully saved
 		 int updated = 0;
+		 ArrayList<String> emptyFields = new ArrayList<>();
+		 
 		 for (int page = 0; page < checked.size(); page++) {
 			 //current inv. item being edited 
 			 CraftSupply orig = checked.get(page).supply;
@@ -570,6 +572,12 @@ public class InventoryScreenGUI extends JFrame {
 			 JPanel form = new JPanel();
 			 form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 			 form.setBorder(new EmptyBorder(10,10,10,10));
+			 if(emptyFields.size() > 0) {
+				 JLabel reqMsg = new JLabel(generateRequiredMessage(emptyFields));
+				 reqMsg.setFont(basicGothicProBoldItalic.deriveFont(10f));
+				 form.add(reqMsg);
+				 form.add(Box.createVerticalStrut(6));
+			 }
 			 JLabel h = new JLabel("Editing " + orig.getName() + " (" + (page + 1) 
 					 + " of " + checked.size() + ")");
 			 h.setFont(basicGothicProBold.deriveFont(14f));
@@ -580,19 +588,19 @@ public class InventoryScreenGUI extends JFrame {
 			 JTextField cf = null, qf = null, sf = null;
 			 if (cat != null && cat.needsColor()) {
 				 form.add(fLabel("Color:"));
-				 cf = prefilled(orig.getColor(), "Enter color...");
+				 cf = prefilled(orig.getColor(), "Enter color...");			 			
 				 form.add(cf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cat != null && cat.needsQuantity()) {
 				 form.add(fLabel("Quantity:"));
-				 qf = prefilled(orig.getQuantity(), "Enter quantity...");
+			     qf = prefilled(orig.getQuantity(), "Enter quantity...");
 				 form.add(qf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cat != null && cat.needsSize()) {
 				 form.add(fLabel("Size:"));
-				 sf = prefilled(orig.getSize(), "Enter size...");
+			     sf = prefilled(orig.getSize(), "Enter size...");
 				 form.add(sf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -611,10 +619,32 @@ public class InventoryScreenGUI extends JFrame {
 				 JOptionPane.showMessageDialog(this, "Edit cancelled. No changes saved.");
 				 return;
 			 }
-			 if(inv.updateItem(orig, new CraftSupply(orig.getName(), orig.getType(), 
-					 cf != null ? cf.getText().trim() : orig.getColor(),
-					 qf != null ? qf.getText().trim() : orig.getQuantity(),
-					 sf != null ? sf.getText().trim() : orig.getSize()))) updated++;
+			 
+			 emptyFields = new ArrayList<>();
+			 
+			 if(cat != null && cat.needsColor()) {
+				 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color...")))
+					 emptyFields.add("COLOR");
+			 }
+			 if(cat != null && cat.needsQuantity()) {
+				 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity...")))
+					 emptyFields.add("QUANTITY");
+			 }
+			 if(cat != null && cat.needsSize()) {
+				 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size...")))
+					 emptyFields.add("SIZE");
+			 }
+			 
+			 if(emptyFields.size() == 0) {
+				 if(inv.updateItem(orig, new CraftSupply(orig.getName(), orig.getType(), 
+						 cf != null ? cf.getText().trim() : orig.getColor(),
+						 qf != null ? qf.getText().trim() : orig.getQuantity(),
+						 sf != null ? sf.getText().trim() : orig.getSize()))) {
+					 updated++;
+				 }
+			 }else {
+				 page--;
+			 }
 		 }
 		 //Success message 
 		 if (updated > 0) {
@@ -658,6 +688,19 @@ public class InventoryScreenGUI extends JFrame {
 			 JOptionPane.showMessageDialog(this, c == 1 ? "1 craft supply was deleted" : c + " craft supplies were deleted");
 			 populateItemList();
 		 }
+		 
+	 }
+	 
+	//generate a warning message if any required fields are left blank
+	 private String generateRequiredMessage(ArrayList<String> emptyFields) {
+		 if(emptyFields.size() == 0)
+			 return "";
+		 else if(emptyFields.size() == 1)
+			 return "** " + emptyFields.get(0) + " IS A REQUIRED FIELD.";
+		 else if(emptyFields.size() == 2)
+			 return "** " + emptyFields.get(0) + " AND " + emptyFields.get(1) + " ARE REQUIRED FIELDS.";
+		 else
+			 return "** " + emptyFields.get(0) + ", " + emptyFields.get(1) + ", AND " + emptyFields.get(2) + " ARE REQUIRED FIELDS.";
 		 
 	 }
 	 

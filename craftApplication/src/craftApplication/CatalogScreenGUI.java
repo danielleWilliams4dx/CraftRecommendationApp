@@ -468,13 +468,23 @@ public class CatalogScreenGUI extends JFrame {
 			 
 			 //if the item does not require any additional information, add it now
 			 if(cs != null && ((!cs.needsColor() && !cs.needsQuantity()) && !cs.needsSize())) {
-				 inv.addItem(cs);
-				 catalog.appendToInventoryFile(cs);
+				 CraftSupply existing = catalog.findExistingItem(cs);
+				
+				 if (existing != null ) {
+					catalog.handleDuplicateAdd(existing, cs, "1", true);
+				 } else {
+					inv.addItem(cs);
+					catalog.appendToInventoryFile(cs);
+				 }
+
 				 added.add(cs.getName());
 			 }else {
 				 needsInfo.add(cs);
 			 }
 		 }
+		 
+		 ArrayList<String> emptyFields = new ArrayList<>();
+		 String[] savedFields = new String[3];
 		 
 		 for (int page = 0; page < needsInfo.size(); page++) {
 			 //current item to add 
@@ -483,6 +493,14 @@ public class CatalogScreenGUI extends JFrame {
 			 JPanel form = new JPanel();
 			 form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 			 form.setBorder(new EmptyBorder(10,10,10,10));
+			 
+			 if(emptyFields.size() > 0) {
+				 JLabel reqMsg = new JLabel(generateRequiredMessage(emptyFields));
+				 reqMsg.setFont(basicGothicProBoldItalic.deriveFont(10f));
+				 form.add(reqMsg);
+				 form.add(Box.createVerticalStrut(6));
+			 }
+					
 			 JLabel h = new JLabel(cs.getName() + " requires some additional information (" + (page + 1) 
 					 + " of " + needsInfo.size() + ")");
 			 h.setFont(basicGothicProBold.deriveFont(14f));
@@ -493,19 +511,28 @@ public class CatalogScreenGUI extends JFrame {
 			 JTextField cf = null, qf = null, sf = null;
 			 if (cs != null && cs.needsColor()) {
 				 form.add(fLabel("Color:"));
-				 cf = prefilled(cs.getColor(), "Enter color...");
+				 if(savedFields[0] == null)
+					 cf = prefilled(cs.getColor(), "Enter color...");
+				 else
+					 cf = prefilled(cs.getColor(), savedFields[0]);
 				 form.add(cf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cs != null && cs.needsQuantity()) {
 				 form.add(fLabel("Quantity:"));
-				 qf = prefilled(cs.getQuantity(), "Enter quantity...");
+				 if(savedFields[1] == null)
+					 qf = prefilled(cs.getQuantity(), "Enter quantity...");
+				 else
+					 qf = prefilled(cs.getColor(), savedFields[1]);
 				 form.add(qf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cs != null && cs.needsSize()) {
 				 form.add(fLabel("Size:"));
-				 sf = prefilled(cs.getSize(), "Enter size...");
+				 if(savedFields[2] == null)
+					 sf = prefilled(cs.getSize(), "Enter size...");
+				 else
+					 sf = prefilled(cs.getColor(), savedFields[2]);
 				 form.add(sf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -525,20 +552,50 @@ public class CatalogScreenGUI extends JFrame {
 //				 return;
 				 break;
 			 }else {
-				//add craft supplies to the inventory with its attributes//Final inv. item with any entered attributes
-				CraftSupply itemToAdd = new CraftSupply(cs.getName(), cs.getType(), cf != null ? cf.getText().trim() : "", qf != null ? qf.getText().trim() : "", sf != null ? sf.getText().trim() : "");
-				
-				//Duplicate Check:
-				CraftSupply existing = catalog.findExistingItem(itemToAdd);
-				
-				if (existing != null ) {
-					catalog.handleDuplicateAdd(existing, itemToAdd, itemToAdd.getQuantity(), cs.needsQuantity());
-				} else {
-					inv.addItem(itemToAdd);
-					catalog.appendToInventoryFile(itemToAdd);
-				}
+				 //check is any of the attributes are empty when trimmed
+				 //If so, add a warning to the panel and do not go to the next page or submit (decrement page)
+				 //save non empty fields for next attempt
+				 emptyFields = new ArrayList<>();
 				 
-				 added.add(cs.getName());
+				 if(cs != null && cs.needsColor()) {
+					 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color...")))
+						 emptyFields.add("COLOR");
+					 else
+						 savedFields[0] = cf.getText().trim();
+				 }
+				 if(cs != null && cs.needsQuantity()) {
+					 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity...")))
+						 emptyFields.add("QUANTITY");
+					 else
+						 savedFields[1] = qf.getText().trim();
+				 }
+				 if(cs != null && cs.needsSize()) {
+					 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size...")))
+						 emptyFields.add("SIZE");
+					 else
+						 savedFields[2] = sf.getText().trim();
+				 }
+				 
+				 if(emptyFields.size() == 0) {
+					//add craft supplies to the inventory with its attributes//Final inv. item with any entered attributes
+					CraftSupply itemToAdd = new CraftSupply(cs.getName(), cs.getType(), cf != null ? cf.getText().trim() : "", qf != null ? qf.getText().trim() : "", sf != null ? sf.getText().trim() : "");
+					
+					//Duplicate Check:
+					CraftSupply existing = catalog.findExistingItem(itemToAdd);
+					
+					if (existing != null ) {
+						catalog.handleDuplicateAdd(existing, itemToAdd, itemToAdd.getQuantity(), cs.needsQuantity());
+					} else {
+						inv.addItem(itemToAdd);
+						catalog.appendToInventoryFile(itemToAdd);
+					}
+					 
+					added.add(cs.getName());
+					//reset saved fields
+					savedFields = new String[3];
+				 }else {
+					 page--;
+				 }
 			 }
 		 }
 		 //success
@@ -589,6 +646,19 @@ public class CatalogScreenGUI extends JFrame {
 		 }
 		 f.setMaximumSize(new Dimension(300, 30));
 		 return f;
+	 }
+	 
+	 //generate a warning message if any required fields are left blank
+	 private String generateRequiredMessage(ArrayList<String> emptyFields) {
+		 if(emptyFields.size() == 0)
+			 return "";
+		 else if(emptyFields.size() == 1)
+			 return "** " + emptyFields.get(0) + " IS A REQUIRED FIELD.";
+		 else if(emptyFields.size() == 2)
+			 return "** " + emptyFields.get(0) + " AND " + emptyFields.get(1) + " ARE REQUIRED FIELDS.";
+		 else
+			 return "** " + emptyFields.get(0) + ", " + emptyFields.get(1) + ", AND " + emptyFields.get(2) + " ARE REQUIRED FIELDS.";
+		 
 	 }
 	 
 	 private JLabel fLabel(String t) {
