@@ -514,7 +514,7 @@ public class CatalogScreenGUI extends JFrame {
 				 if(savedFields[0] == null)
 					 cf = prefilled(cs.getColor(), "Enter color...");
 				 else
-					 cf = prefilled(cs.getColor(), savedFields[0]);
+					 cf = prefilled(savedFields[0], "Enter color...");
 				 form.add(cf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -523,7 +523,7 @@ public class CatalogScreenGUI extends JFrame {
 				 if(savedFields[1] == null)
 					 qf = prefilled(cs.getQuantity(), "Enter quantity...");
 				 else
-					 qf = prefilled(cs.getColor(), savedFields[1]);
+					 qf = prefilled(savedFields[1], "Enter quantity...");
 				 form.add(qf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -532,7 +532,7 @@ public class CatalogScreenGUI extends JFrame {
 				 if(savedFields[2] == null)
 					 sf = prefilled(cs.getSize(), "Enter size...");
 				 else
-					 sf = prefilled(cs.getColor(), savedFields[2]);
+					 sf = prefilled(savedFields[2], "Enter size...");
 				 form.add(sf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -558,21 +558,24 @@ public class CatalogScreenGUI extends JFrame {
 				 emptyFields = new ArrayList<>();
 				 
 				 if(cs != null && cs.needsColor()) {
-					 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color...")))
+					 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color..."))) {
 						 emptyFields.add("COLOR");
-					 else
+						 savedFields[0] = null;
+					 } else
 						 savedFields[0] = cf.getText().trim();
 				 }
 				 if(cs != null && cs.needsQuantity()) {
-					 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity...")))
+					 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity..."))) {
 						 emptyFields.add("QUANTITY");
-					 else
+						 savedFields[1] = null;
+					 } else
 						 savedFields[1] = qf.getText().trim();
 				 }
 				 if(cs != null && cs.needsSize()) {
-					 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size...")))
+					 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size..."))) {
 						 emptyFields.add("SIZE");
-					 else
+						 savedFields[2] = null;
+					 } else
 						 savedFields[2] = sf.getText().trim();
 				 }
 				 

@@ -563,6 +563,8 @@ public class InventoryScreenGUI extends JFrame {
 		 //items successfully saved
 		 int updated = 0;
 		 ArrayList<String> emptyFields = new ArrayList<>();
+		 String[] savedFields = new String[3];
+		 Boolean retry = false;
 		 
 		 for (int page = 0; page < checked.size(); page++) {
 			 //current inv. item being edited 
@@ -588,19 +590,34 @@ public class InventoryScreenGUI extends JFrame {
 			 JTextField cf = null, qf = null, sf = null;
 			 if (cat != null && cat.needsColor()) {
 				 form.add(fLabel("Color:"));
-				 cf = prefilled(orig.getColor(), "Enter color...");			 			
+				 if(savedFields[0] != null)
+					 cf = prefilled(savedFields[0], "Enter color...");
+				 else if(retry)
+					 cf = prefilled("", "Enter color...");
+				 else
+					 cf = prefilled(orig.getColor(), "Enter color...");
 				 form.add(cf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cat != null && cat.needsQuantity()) {
 				 form.add(fLabel("Quantity:"));
-			     qf = prefilled(orig.getQuantity(), "Enter quantity...");
+				 if(savedFields[1] != null)
+					 qf = prefilled(savedFields[1], "Enter quantity...");
+				 else if(retry)
+					 qf = prefilled("", "Enter quantity...");
+				 else
+					 qf = prefilled(orig.getQuantity(), "Enter quantity...");
 				 form.add(qf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
 			 if (cat != null && cat.needsSize()) {
 				 form.add(fLabel("Size:"));
-			     sf = prefilled(orig.getSize(), "Enter size...");
+				 if(savedFields[2] != null)
+					 sf = prefilled(savedFields[2], "Enter size...");
+				 else if(retry)
+					 sf = prefilled("", "Enter size...");
+				 else
+					 sf = prefilled(orig.getSize(), "Enter size...");
 				 form.add(sf);
 				 form.add(Box.createVerticalStrut(8));
 			 }
@@ -623,16 +640,25 @@ public class InventoryScreenGUI extends JFrame {
 			 emptyFields = new ArrayList<>();
 			 
 			 if(cat != null && cat.needsColor()) {
-				 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color...")))
+				 if(cf == null || (cf.getText().trim().equals("") || cf.getText().trim().equals("Enter color..."))) {
 					 emptyFields.add("COLOR");
+				 	 savedFields[0] = null;
+				 } else
+					 savedFields[0] = cf.getText().trim();
 			 }
 			 if(cat != null && cat.needsQuantity()) {
-				 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity...")))
+				 if(qf == null || (qf.getText().trim().equals("") || qf.getText().trim().equals("Enter quantity..."))) {
 					 emptyFields.add("QUANTITY");
+					 savedFields[1] = null;
+				 } else
+					 savedFields[1] = qf.getText().trim();
 			 }
 			 if(cat != null && cat.needsSize()) {
-				 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size...")))
+				 if(sf == null || (sf.getText().trim().equals("") || sf.getText().trim().equals("Enter size..."))) {
 					 emptyFields.add("SIZE");
+				 	 savedFields[2] = null;
+			 	 } else
+					 savedFields[2] = sf.getText().trim();
 			 }
 			 
 			 if(emptyFields.size() == 0) {
@@ -641,9 +667,14 @@ public class InventoryScreenGUI extends JFrame {
 						 qf != null ? qf.getText().trim() : orig.getQuantity(),
 						 sf != null ? sf.getText().trim() : orig.getSize()))) {
 					 updated++;
+					//reset saved fields
+					savedFields = new String[3];
+					retry = false;
 				 }
 			 }else {
 				 page--;
+				 retry = true;
+				 
 			 }
 		 }
 		 //Success message 
