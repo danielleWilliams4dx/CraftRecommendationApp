@@ -415,14 +415,14 @@ public class CatalogScreenGUI extends JFrame {
 	 private void openFilterDialog() {
 		 String[] cats = {"Adhesives", "Drawing", "Jewelry", "Painting", "Paper", "Sewing", "Other"};
 		 JPanel p = new JPanel();
-		 p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+		 p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS)); 
 		 p.setBorder(new EmptyBorder(10,10,10,10));
 		 JLabel h = new JLabel("Select categories:");
 		 h.setFont(basicGothicProBold.deriveFont(13f));
 		 p.add(h);
 		 p.add(Box.createVerticalStrut(10));
 		 //need it to read later which boxes are checked
-		 ArrayList<JCheckBox> boxes = new ArrayList<>();
+		 ArrayList<JCheckBox> boxes = new ArrayList<>(); 
 		 for (String c : cats) {
 			 //CheckBox whose label is a cat. name
 			 JCheckBox cb = new JCheckBox(c);
