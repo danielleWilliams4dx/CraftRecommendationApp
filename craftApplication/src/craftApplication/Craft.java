@@ -53,7 +53,7 @@ public class Craft {
 	
 	//new String method to be used when displaying instructions
 	public String showInstructions() {
-		return "Source: "+this.link+"\nInstructions\n"+this.instructions;
+		return "Source: "+this.link+"\nInstructions:\n"+this.instructions;
 	}
 	
 	//fix: allowing screens to print correct numbering (1 based)

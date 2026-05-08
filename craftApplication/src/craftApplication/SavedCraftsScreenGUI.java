@@ -631,7 +631,7 @@ public class SavedCraftsScreenGUI extends JFrame {
         btn.setBorder(new EmptyBorder(8, 20, 8, 20));
         btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         btn.addActionListener(e -> JOptionPane.showMessageDialog(this,
-                "Instructions for: " + craft.getLine().split(",")[0].trim() + "\n\n(Connect to web scraper here)"));
+                "Instructions for: " + craft.getLine().split(",")[0].trim() + "\n\n"+craft.showInstructions()));
         btn.addMouseListener(new MouseAdapter() {
             @Override public void mouseEntered(MouseEvent e) { btn.setBackground(new Color(150, 200, 150)); btn.repaint(); }
             @Override public void mouseExited(MouseEvent e)  { btn.setBackground(VIEW_BG); btn.repaint(); }
