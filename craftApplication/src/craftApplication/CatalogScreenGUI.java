@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class CatalogScreenGUI extends JFrame {
 	
-	
+	 
 	//Colors
 	
 	private static final Color BG_COLOR = new Color(244, 226, 216);

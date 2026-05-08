@@ -7,7 +7,7 @@ import javax.swing.border.EmptyBorder;
 import java.io.File;
 import java .io.IOException;
 import java.util.ArrayList;
-
+ 
 public class InventoryScreenGUI extends JFrame {
 	
 	

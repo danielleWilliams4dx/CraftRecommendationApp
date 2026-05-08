@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
+ 
 public class RecommenderScreenGUI extends JFrame {
 
     private static final Color BG_COLOR    = new Color(244, 216, 227);

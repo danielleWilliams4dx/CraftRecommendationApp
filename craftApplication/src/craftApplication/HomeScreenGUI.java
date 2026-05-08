@@ -36,7 +36,7 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
+ 
 public class HomeScreenGUI extends JFrame {
 
     private static final Color BG_COLOR    = new Color(255, 248, 206);
