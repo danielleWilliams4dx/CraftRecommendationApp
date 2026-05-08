@@ -368,7 +368,7 @@ public class CatalogScreen implements Screen {
 	
 	//Increments quantity of an existing inv. item 
 	//If qnt is a required field - we add the newly added entered qnt value to the existing one
-	//otherwise we add 1 to whatever numeric quntity is stored 
+	//otherwise we add 1 to whatever numeric quantity is stored 
 	public void handleDuplicateAdd(CraftSupply existing, CraftSupply incoming, 
 			String enteredQuantity, boolean quantityIsAttribute) {
 		

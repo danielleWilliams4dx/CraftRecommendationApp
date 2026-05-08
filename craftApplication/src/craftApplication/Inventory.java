@@ -191,5 +191,4 @@ public class Inventory {
 			System.err.println("Error rewriting inventory file: " + e.getMessage());
 		}
 	}
-
 }
