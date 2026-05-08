@@ -456,7 +456,7 @@ public class InventoryScreenGUI extends JFrame {
 	 
 	 //Filter Dialog 
 	 private void openFilterDialog() {
-		 String[] cats = {"Adhesives", "Drawing", "Jewerly", "Painting", "Paper", "Sewing", "Other"};
+		 String[] cats = {"Adhesives", "Drawing", "Jewelry", "Painting", "Paper", "Sewing", "Other"};
 		 JPanel p = new JPanel();
 		 p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		 p.setBorder(new EmptyBorder(10,10,10,10));
